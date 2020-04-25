@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Box, Text, Button } from 'theme-ui';
 
 import { leaveRoom } from '../store/room/actions';
-import { deleteRoom } from '../firebase/rooms';
+import { dbLeaveRoom } from '../firebase/rooms';
 import { AppState } from '../store';
 
 interface LobbyProps {
@@ -18,7 +18,7 @@ const Lobby = (props: LobbyProps) => {
             console.error('Room ID not found');
             return;
         }
-        await deleteRoom(roomId);
+        await dbLeaveRoom(roomId);
         props.leaveRoom();
     };
     return (
