@@ -1,5 +1,5 @@
 export interface RoomState {
-    roomId: String | null;
+    roomId: string | null;
 }
 
 export const JOIN_ROOM = 'JOIN_ROOM';

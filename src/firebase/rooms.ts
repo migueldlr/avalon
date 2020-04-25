@@ -1,7 +1,14 @@
 import { customAlphabet } from 'nanoid';
 import { auth, db } from './index';
 
-export const dbCreateRoom = async () => {
+export enum RoomResponse {
+    OK,
+    ROOM_NOT_FOUND,
+    NAME_TAKEN,
+    OTHER,
+}
+
+export const dbCreateRoom = async (name: string) => {
     const uid = auth.currentUser?.uid;
     const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10);
     const roomId = nanoid();
@@ -11,7 +18,7 @@ export const dbCreateRoom = async () => {
             .onDisconnect()
             .remove()
             .then(() => {
-                roomRef.set({ host: true });
+                roomRef.set({ host: true, name });
             });
         return roomId;
     } catch (err) {
@@ -20,26 +27,40 @@ export const dbCreateRoom = async () => {
     }
 };
 
-export const dbJoinRoom = async (roomId: String): Promise<boolean> => {
+export const dbJoinRoom = async (
+    name: string,
+    roomId: string,
+): Promise<RoomResponse> => {
     const uid = auth.currentUser?.uid;
     const roomRef = db.ref(`rooms/${roomId}/${uid}`);
     try {
-        const exists = (await db.ref(`rooms/${roomId}`).once('value')).val();
-        if (exists == null) return false;
+        const roomSnap: Array<{ name: string }> | null = (
+            await db.ref(`rooms/${roomId}`).once('value')
+        ).val();
+
+        if (roomSnap == null) return RoomResponse.ROOM_NOT_FOUND;
+        if (Object.values(roomSnap).some((u) => u.name === name))
+            return RoomResponse.NAME_TAKEN;
+
         await roomRef
             .onDisconnect()
             .remove()
             .then(() => {
-                roomRef.set({ host: false });
+                roomRef.set({ host: false, name });
             });
-        return true;
+
+        return RoomResponse.OK;
     } catch (err) {
         console.log(err);
-        return false;
+        return RoomResponse.OTHER;
     }
 };
 
-export const dbLeaveRoom = async (roomId: String) => {
+export const dbGetRoomRef = (roomId: string) => {
+    return db.ref(`rooms/${roomId}`);
+};
+
+export const dbLeaveRoom = async (roomId: string) => {
     const uid = auth.currentUser?.uid;
     const roomRef = db.ref(`rooms/${roomId}/${uid}`);
     try {

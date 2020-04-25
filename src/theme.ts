@@ -6,7 +6,13 @@ export default {
         blue: '#07c',
         lightgray: '#f6f6ff',
         background: 'white',
-        primary: '#08979c',
+        primary: '#4a266a',
+        gray: {
+            4: '#f0f0f0',
+            6: '#bfbfbf',
+            7: '#8c8c8c',
+            8: '#595959',
+        },
     },
     space: [0, 4, 8, 16, 32, 64, 128, 256],
     fonts: {
@@ -32,6 +38,17 @@ export default {
             fontFamily: 'body',
             fontWeight: 'body',
             minHeight: '100vh',
+        },
+    },
+    buttons: {
+        primary: {
+            transition: 'color 1s',
+        },
+        disabled: {
+            bg: '#dca8ff',
+        },
+        copy: {
+            bg: '#8c44d4',
         },
     },
 };

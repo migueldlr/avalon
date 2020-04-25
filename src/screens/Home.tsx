@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { Box, Flex, Button, Input } from 'theme-ui';
-import { dbCreateRoom, dbJoinRoom } from '../firebase/rooms';
+import { Box, Button, Input, Text } from 'theme-ui';
+import { dbCreateRoom, dbJoinRoom, RoomResponse } from '../firebase/rooms';
 import { joinRoom } from '../store/room/actions';
 
 interface HomeProps {
@@ -10,30 +10,65 @@ interface HomeProps {
 
 const Home = (props: HomeProps) => {
     const [roomIdInput, setRoomIdInput] = useState('');
+    const [nameInput, setNameInput] = useState('');
+    const [message, setMessage] = useState('');
 
     const handleCreate = async () => {
-        const roomId = await dbCreateRoom();
+        const roomId = await dbCreateRoom(nameInput);
         if (roomId == null) return;
         props.joinRoom(roomId);
     };
     const handleJoin = async () => {
-        if (roomIdInput.length === 0) return;
-        const joined = await dbJoinRoom(roomIdInput);
-        if (joined) props.joinRoom(roomIdInput);
+        const joined = await dbJoinRoom(nameInput, roomIdInput);
+        switch (joined) {
+            case RoomResponse.OK:
+                props.joinRoom(roomIdInput);
+                break;
+            case RoomResponse.ROOM_NOT_FOUND:
+                setMessage('Room not found!');
+                break;
+            case RoomResponse.NAME_TAKEN:
+                setMessage('Name taken!');
+                break;
+            case RoomResponse.OTHER:
+                setMessage('Something unexpected happened... oops!');
+                break;
+        }
     };
 
     return (
-        <Box sx={{ textAlign: 'right' }}>
-            <Button onClick={handleCreate}>Create Room</Button>
-            <Flex>
-                <Input
-                    sx={{ width: 'inherit' }}
-                    onChange={(e) => setRoomIdInput(e.target.value)}
-                    value={roomIdInput}
-                />
-                <Button onClick={handleJoin}>Join Room</Button>
-            </Flex>
-            {/* <Text>Please center</Text> */}
+        <Box sx={{ textAlign: 'center' }}>
+            <Input
+                sx={{ mb: '1em' }}
+                onChange={(e) => setNameInput(e.target.value)}
+                value={nameInput}
+                placeholder="Your Name"
+            />
+            <Button
+                onClick={handleCreate}
+                sx={{ width: '100%', mb: '1em' }}
+                disabled={nameInput === ''}
+                variant={nameInput === '' ? 'disabled' : 'primary'}>
+                Create Room
+            </Button>
+            <Input
+                sx={{ width: '100%' }}
+                onChange={(e) => setRoomIdInput(e.target.value)}
+                value={roomIdInput}
+                placeholder="Room Code"
+            />
+            <Button
+                onClick={handleJoin}
+                sx={{ width: '100%' }}
+                variant={
+                    roomIdInput === '' || nameInput === ''
+                        ? 'disabled'
+                        : 'primary'
+                }
+                disabled={roomIdInput === '' || nameInput === ''}>
+                Join Room
+            </Button>
+            <Text sx={{ height: '1em' }}>{message}</Text>
         </Box>
     );
 };

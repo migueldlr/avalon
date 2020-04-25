@@ -11,7 +11,7 @@ import Home from './Home';
 import Lobby from './Lobby';
 
 interface AppProps {
-    roomId?: String;
+    roomId?: string;
 }
 
 const App: React.FC<AppProps> = ({ roomId }) => {
