@@ -1,7 +1,10 @@
 import * as functions from 'firebase-functions';
+
 import admin = require('firebase-admin');
 
 admin.initializeApp();
+const db = admin.database();
+
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
 //
