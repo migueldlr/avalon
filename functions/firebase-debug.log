@@ -1,0 +1,22 @@
+[debug] [2020-04-25T20:26:28.573Z] ----------------------------------------------------------------------
+[debug] [2020-04-25T20:26:28.578Z] Command:       C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions --debug
+[debug] [2020-04-25T20:26:28.578Z] CLI Version:   8.1.1
+[debug] [2020-04-25T20:26:28.579Z] Platform:      win32
+[debug] [2020-04-25T20:26:28.579Z] Node Version:  v12.16.2
+[debug] [2020-04-25T20:26:28.581Z] Time:          Sat Apr 25 2020 16:26:28 GMT-0400 (Eastern Daylight Time)
+[debug] [2020-04-25T20:26:28.582Z] ----------------------------------------------------------------------
+[debug] [2020-04-25T20:26:28.582Z] 
+[debug] [2020-04-25T20:26:28.602Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-04-25T20:26:28.607Z] > authorizing via signed-in user
+[debug] [2020-04-25T20:26:28.616Z] [iam] checking project game-89897 for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2020-04-25T20:26:28.626Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/game-89897:testIamPermissions  
+ {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2020-04-25T20:26:29.031Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 25 Apr 2020 20:26:30 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","server-timing":"gfet4t7; dur=125","alt-svc":"quic=\":443\"; ma=2592000; v=\"46,43\",h3-Q050=\":443\"; ma=2592000,h3-Q049=\":443\"; ma=2592000,h3-Q048=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,h3-T050=\":443\"; ma=2592000","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-04-25T20:26:29.063Z] >>> HTTP REQUEST POST https://iam.googleapis.com/v1/projects/game-89897/serviceAccounts/game-89897@appspot.gserviceaccount.com:testIamPermissions  
+ {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2020-04-25T20:26:29.537Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Sat, 25 Apr 2020 20:26:30 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"quic=\":443\"; ma=2592000; v=\"46,43\",h3-Q050=\":443\"; ma=2592000,h3-Q049=\":443\"; ma=2592000,h3-Q048=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,h3-T050=\":443\"; ma=2592000","accept-ranges":"none","transfer-encoding":"chunked"}
+[info] 
+[info] === Deploying to 'game-89897'...
+[info] 
+[info] i  deploying functions
+[info] Running command: npm --prefix "$RESOURCE_DIR" run lint
