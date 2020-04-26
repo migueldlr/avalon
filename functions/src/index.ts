@@ -26,14 +26,40 @@ const db = admin.database();
 //     res.redirect(303, snapshot.ref.toString());
 // });
 
+const getRoles = (n: number): string[] => {
+    const goodBadMap: { [k: number]: number[] } = {
+        5: [3, 2],
+        6: [4, 2],
+        7: [4, 3],
+        8: [5, 3],
+        9: [6, 3],
+        10: [6, 4],
+    };
+    const goodBad = goodBadMap[n];
+    const good = new Array(goodBad[0]).fill('good');
+    good[0] = 'merlin';
+    const bad = new Array(goodBad[1]).fill('bad');
+    bad[0] = 'assassin';
+    const roles = good.concat(bad);
+    // Fisher-Yates shuffle https://stackoverflow.com/a/12646864
+    for (let i = roles.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [roles[i], roles[j]] = [roles[j], roles[i]];
+    }
+    return roles;
+};
+
 export const createGame = functions.https.onCall(async (data, context) => {
     const roomId = data.roomId;
     const roomData: { [k: string]: { name: string } } = (
         await db.ref(`rooms/${roomId}`).once('value')
     ).val();
-    const players = Object.entries(roomData).map(([k, u]) => ({
+    const numPlayers = Object.entries(roomData).length;
+    const roles = getRoles(numPlayers);
+    const players = Object.entries(roomData).map(([k, u], i) => ({
         uid: k,
         name: u.name,
+        role: roles[i],
     }));
 
     const gameId = roomId;

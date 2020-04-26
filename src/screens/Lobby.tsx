@@ -4,9 +4,9 @@ import { Box, Text, Button, Flex } from 'theme-ui';
 
 import { leaveRoom } from '../store/room/actions';
 import { joinGame } from '../store/game/actions';
-import { dbLeaveRoom, dbGetRoomRef, dbGetGameRef } from '../firebase/rooms';
+import { dbLeaveRoom, dbGetRoomRef } from '../firebase/rooms';
 import { AppState } from '../store';
-import { dbCreateGame } from '../firebase/game';
+import { dbCreateGame, dbGetGameRef } from '../firebase/game';
 
 interface LobbyProps {
     roomId: string | null;
