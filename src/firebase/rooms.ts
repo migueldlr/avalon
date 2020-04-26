@@ -60,6 +60,10 @@ export const dbGetRoomRef = (roomId: string) => {
     return db.ref(`rooms/${roomId}`);
 };
 
+export const dbGetGameRef = (gameId: string) => {
+    return db.ref(`games/${gameId}`);
+};
+
 export const dbLeaveRoom = async (roomId: string) => {
     const uid = auth.currentUser?.uid;
     const roomRef = db.ref(`rooms/${roomId}/${uid}`);

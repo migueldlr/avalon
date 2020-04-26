@@ -9,12 +9,14 @@ import { AppState } from '../store/index';
 
 import Home from './Home';
 import Lobby from './Lobby';
+import Game from './Game';
 
 interface AppProps {
     roomId?: string;
+    inGame?: boolean;
 }
 
-const App: React.FC<AppProps> = ({ roomId }) => {
+const App: React.FC<AppProps> = ({ roomId, inGame }) => {
     useEffect(() => {
         auth.signInAnonymously()
             .catch((error: { code: any; message: any }) => {
@@ -41,12 +43,15 @@ const App: React.FC<AppProps> = ({ roomId }) => {
                 alignItems: 'center',
                 minHeight: '100vh',
             }}>
-            {roomId ? <Lobby /> : <Home />}
+            {inGame ? <Game /> : roomId ? <Lobby /> : <Home />}
         </Flex>
     );
 };
 
 export default connect(
-    (state: AppState) => ({ roomId: state.rooms.roomId }),
+    (state: AppState) => ({
+        roomId: state.rooms.roomId,
+        inGame: state.game.inGame,
+    }),
     null,
 )(App);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Box, Button, Input, Text } from 'theme-ui';
+import { Box, Text } from 'theme-ui';
 import { AppState } from '../store/index';
 
 interface GameProps {
@@ -11,11 +11,12 @@ const Game = (props: GameProps) => {
     const { gameId } = props;
     return (
         <Box>
+            <Text>Game</Text>
             <Text>{gameId ?? ''}</Text>
         </Box>
     );
 };
 
-export default connect((state: AppState) => ({ gameId: state.game.gameId }))(
+export default connect((state: AppState) => ({ gameId: state.rooms.roomId }))(
     Game,
 );

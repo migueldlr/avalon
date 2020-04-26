@@ -4,7 +4,7 @@ import { Box, Text, Button, Flex } from 'theme-ui';
 
 import { leaveRoom } from '../store/room/actions';
 import { joinGame } from '../store/game/actions';
-import { dbLeaveRoom, dbGetRoomRef } from '../firebase/rooms';
+import { dbLeaveRoom, dbGetRoomRef, dbGetGameRef } from '../firebase/rooms';
 import { AppState } from '../store';
 import { dbCreateGame } from '../firebase/game';
 
@@ -15,10 +15,23 @@ interface LobbyProps {
 }
 
 const Lobby = (props: LobbyProps) => {
-    const { roomId } = props;
+    const { roomId, joinGame } = props;
     const [userList, setUserList] = useState<Array<string>>([]);
+
     useEffect(() => {
         if (roomId == null) return;
+        // IIFE to register listener for game start
+        ((gameId: string) => {
+            const gameRef = dbGetGameRef(gameId);
+            gameRef.on('value', (snap) => {
+                const snapVal = snap.val();
+
+                if (snapVal == null) return;
+                console.log('value changed!');
+                joinGame(gameId);
+            });
+        })(roomId);
+
         const roomRef = dbGetRoomRef(roomId);
         roomRef.on('value', (snap) => {
             const snapVal = snap.val();
@@ -29,7 +42,7 @@ const Lobby = (props: LobbyProps) => {
             const data: Array<{ name: string }> = Object.values(snapVal);
             setUserList(data.map((u) => u.name));
         });
-    }, [roomId]);
+    }, [roomId, joinGame]);
     if (roomId == null)
         return (
             <Box>
