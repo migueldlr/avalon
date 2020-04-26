@@ -3,12 +3,15 @@ import { connect } from 'react-redux';
 import { Box, Text, Button, Flex } from 'theme-ui';
 
 import { leaveRoom } from '../store/room/actions';
+import { joinGame } from '../store/game/actions';
 import { dbLeaveRoom, dbGetRoomRef } from '../firebase/rooms';
 import { AppState } from '../store';
+import { dbCreateGame } from '../firebase/game';
 
 interface LobbyProps {
     roomId: string | null;
     leaveRoom: typeof leaveRoom;
+    joinGame: typeof joinGame;
 }
 
 const Lobby = (props: LobbyProps) => {
@@ -42,6 +45,13 @@ const Lobby = (props: LobbyProps) => {
         props.leaveRoom();
         await dbLeaveRoom(roomId);
     };
+
+    const handleCreateGame = async () => {
+        const gameId = await dbCreateGame(roomId);
+        if (gameId == null) return;
+        props.joinGame(gameId);
+    };
+
     return (
         <Box>
             <Button
@@ -56,6 +66,7 @@ const Lobby = (props: LobbyProps) => {
                     <Text key={uname}>{uname}</Text>
                 ))}
             </Flex>
+            <Button onClick={handleCreateGame}>Start Game</Button>
             <Button onClick={handleLeaveRoom}>Leave Room</Button>
         </Box>
     );
@@ -63,4 +74,5 @@ const Lobby = (props: LobbyProps) => {
 
 export default connect((state: AppState) => ({ roomId: state.rooms.roomId }), {
     leaveRoom,
+    joinGame,
 })(Lobby);
