@@ -47,7 +47,6 @@ export const createGame = functions.https.onCall(async (data, context) => {
         .catch((err) => {
             throw new functions.https.HttpsError('unknown', err);
         });
-    players.forEach((player) => {});
 
     return { gameId };
 });
