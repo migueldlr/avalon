@@ -49,39 +49,29 @@ const getRoles = (n: number): string[] => {
     return roles;
 };
 
-interface GameInState {
-    ready: { [uid: string]: boolean };
-}
-
-interface GameState {
-    numPlayers: number;
-    phase: 'assign' | 'turn';
-}
-
-const handleGameInChange = (
-    gameIn: GameInState,
-    gameState: GameState,
-    gameRef: admin.database.Reference,
-) => {
-    console.log(JSON.stringify(gameState));
-    console.log(JSON.stringify(gameIn));
-    if (gameState.phase === 'assign') {
-        console.log(
-            `${Object.values(gameIn.ready).length} ${gameState.numPlayers}`,
-        );
-        if (Object.values(gameIn.ready).length === gameState.numPlayers) {
-            gameRef
-                .child('phase')
-                .set('turn')
-                .catch((err) => {
-                    throw new functions.https.HttpsError(
-                        'internal',
-                        'could not change phase to turn',
-                    );
-                });
-        }
-    }
-};
+export const updateGame = functions.database
+    .ref(`/gameIn/{gameId}`)
+    .onWrite((change, context) => {
+        const gameId: string = context.params.gameId;
+        const gameIn = change.after.val();
+        const gameRef = db.ref(`games/${gameId}`);
+        return gameRef.once('value', (gameSnap) => {
+            const gameState = gameSnap.val();
+            if (gameState.phase === 'assign') {
+                console.log(
+                    `${Object.values(gameIn.ready).length} ${
+                        gameState.numPlayers
+                    }`,
+                );
+                if (
+                    Object.values(gameIn.ready).length === gameState.numPlayers
+                ) {
+                    return gameRef.child('phase').set('turn');
+                }
+            }
+            return () => null;
+        });
+    });
 
 export const createGame = functions.https.onCall(async (data, context) => {
     const roomId = data.roomId;
@@ -103,7 +93,6 @@ export const createGame = functions.https.onCall(async (data, context) => {
 
     const gameId = roomId;
     const gameRef = db.ref(`games/${gameId}`);
-    const gameInputRef = db.ref(`gameIn/${gameId}`);
     await gameRef
         .set({
             numPlayers: players.length,
@@ -113,18 +102,4 @@ export const createGame = functions.https.onCall(async (data, context) => {
         .catch((err) => {
             throw new functions.https.HttpsError('internal', err);
         });
-
-    gameInputRef.on('value', (snap) => {
-        const snapVal = snap.val();
-        gameRef
-            .once('value', (gameSnap) => {
-                const gameState: GameState = gameSnap.val();
-                console.log(JSON.stringify(snapVal));
-                handleGameInChange(snapVal, gameState, gameRef);
-            })
-            .catch((err) => {
-                throw new functions.https.HttpsError('internal', err);
-            });
-    });
-    // register a listener for game input
 });
