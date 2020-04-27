@@ -15,3 +15,7 @@ export const dbCreateGame = async (roomId: string): Promise<string | null> => {
 export const dbGetGameRef = (gameId: string) => {
     return db.ref(`games/${gameId}`);
 };
+
+export const dbGetGameInRef = (gameId: string) => {
+    return db.ref(`gameIn/${gameId}`);
+};
