@@ -1,30 +1,10 @@
 import * as functions from 'firebase-functions';
+import { shuffle } from './util';
 
 import admin = require('firebase-admin');
 
 admin.initializeApp();
 const db = admin.database();
-
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-// export const helloWorld = functions.https.onRequest((request, response) => {
-//     response.send('Hello from Firebase!');
-// });
-
-// Take the text parameter passed to this HTTP endpoint and insert it into the
-// Realtime Database under the path /messages/:pushId/original
-// exports.addMessage = functions.https.onRequest(async (req, res) => {
-//     // Grab the text parameter.
-//     const original = req.query.text;
-//     // Push the new message into the Realtime Database using the Firebase Admin SDK.
-//     const snapshot = await admin
-//         .database()
-//         .ref('/messages')
-//         .push({ original: original });
-//     // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
-//     res.redirect(303, snapshot.ref.toString());
-// });
 
 const getRoles = (n: number): string[] => {
     const goodBadMap: { [k: number]: number[] } = {
@@ -40,16 +20,36 @@ const getRoles = (n: number): string[] => {
     good[0] = 'merlin';
     const bad = new Array(goodBad[1]).fill('bad');
     bad[0] = 'assassin';
-    const roles = good.concat(bad);
-    // Fisher-Yates shuffle https://stackoverflow.com/a/12646864
-    for (let i = roles.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [roles[i], roles[j]] = [roles[j], roles[i]];
-    }
+    const roles = shuffle(good.concat(bad));
     return roles;
 };
 
-export const updateGame = functions.database
+interface GameStateType {
+    phase: 'assign' | 'turn';
+    numPlayers: number;
+}
+
+interface GameInType {
+    ready: { [uid: string]: boolean };
+}
+
+const updateGame = (
+    gameState: GameStateType,
+    gameIn: GameInType,
+    gameRef: admin.database.Reference,
+): Promise<any> | null => {
+    if (gameState.phase === 'assign') {
+        console.log(
+            `${Object.values(gameIn.ready).length} ${gameState.numPlayers}`,
+        );
+        if (Object.values(gameIn.ready).length === gameState.numPlayers) {
+            return gameRef.child('phase').set('turn');
+        }
+    }
+    return null;
+};
+
+export const updateGameListener = functions.database
     .ref(`/gameIn/{gameId}`)
     .onWrite((change, context) => {
         const gameId: string = context.params.gameId;
@@ -57,19 +57,7 @@ export const updateGame = functions.database
         const gameRef = db.ref(`games/${gameId}`);
         return gameRef.once('value', (gameSnap) => {
             const gameState = gameSnap.val();
-            if (gameState.phase === 'assign') {
-                console.log(
-                    `${Object.values(gameIn.ready).length} ${
-                        gameState.numPlayers
-                    }`,
-                );
-                if (
-                    Object.values(gameIn.ready).length === gameState.numPlayers
-                ) {
-                    return gameRef.child('phase').set('turn');
-                }
-            }
-            return () => null;
+            return updateGame(gameState, gameIn, gameRef);
         });
     });
 
@@ -89,6 +77,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
         uid: k,
         name: u.name,
         role: roles[i],
+        order: shuffle([...Array(numPlayers).keys()]),
     }));
 
     const gameId = roomId;
