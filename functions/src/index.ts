@@ -31,7 +31,7 @@ interface PlayerType {
 }
 
 interface GameStateType {
-    phase: 'assign' | 'turn';
+    phase: 'assign' | 'turn' | 'voteTeam';
     numPlayers: number;
     order: number[];
     currentTurn: number;
@@ -40,6 +40,7 @@ interface GameStateType {
 
 interface GameInType {
     ready: { [uid: string]: boolean };
+    proposed: string;
 }
 
 const updateGame = (
@@ -57,6 +58,11 @@ const updateGame = (
                 currentTurn: 0,
             });
         }
+    } else if (gameState.phase === 'turn' && gameIn.proposed) {
+        return gameRef.update({
+            phase: 'voteTeam',
+            proposed: gameIn.proposed,
+        });
     }
     return null;
 };

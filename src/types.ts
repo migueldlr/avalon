@@ -7,11 +7,12 @@ export interface PlayerType {
 }
 
 export interface GameStateType {
-    phase: 'assign' | 'turn' | 'start';
+    phase: 'assign' | 'turn' | 'start' | 'voteTeam';
     numPlayers: number;
     order: number[];
     currentTurn: number;
     players: Array<PlayerType>;
+    proposed: string;
 }
 
 export interface GameInType {

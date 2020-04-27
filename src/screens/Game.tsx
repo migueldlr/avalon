@@ -8,6 +8,7 @@ import { db, auth } from '../firebase/index';
 import { GameStateType } from '../types';
 import AssignRole from '../components/AssignRole';
 import PickTeam from '../components/PickTeam';
+import VoteTeam from '../components/VoteTeam';
 
 interface GameProps {
     gameId: string;
@@ -22,6 +23,7 @@ const Game = (props: GameProps) => {
         order: [],
         currentTurn: -1,
         players: [],
+        proposed: '',
     });
 
     useEffect(() => {
@@ -63,6 +65,9 @@ const Game = (props: GameProps) => {
                         submitTeam={setProposedTeam}
                     />
                 )}
+            {gameState.phase === 'voteTeam' && (
+                <VoteTeam gameState={gameState} />
+            )}
             <Text></Text>
         </Box>
     );
