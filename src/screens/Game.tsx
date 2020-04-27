@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Box, Text, Button } from 'theme-ui';
+import { Box, Text } from 'theme-ui';
 import { AppState } from '../store/index';
 
 import { dbGetGameRef } from '../firebase/game';
 import { db, auth } from '../firebase/index';
 import { GameStateType } from '../types';
+import AssignRole from '../components/AssignRole';
 
 interface GameProps {
     gameId: string;
@@ -23,14 +24,11 @@ const Game = (props: GameProps) => {
     });
 
     useEffect(() => {
-        console.log(gameId);
         const gameRef = dbGetGameRef(gameId);
         gameRef.on('value', (snap) => {
             const snapVal = snap.val();
-            console.log(JSON.stringify(snapVal));
 
             if (snapVal == null) return;
-            console.log('value changed!');
             setGameState(snapVal);
         });
     }, [gameId]);
@@ -39,17 +37,17 @@ const Game = (props: GameProps) => {
         await db.ref(`gameIn/${gameId}/ready/${uid}`).set(true);
     };
 
-    console.log(gameState);
-
     return (
         <Box>
             <Text>Game</Text>
             <Text>{gameId ?? ''}</Text>
             <Text>{JSON.stringify(gameState)}</Text>
-            {gameState.phase === 'assign' ? (
-                <Button onClick={setReady}>Ready!</Button>
-            ) : (
-                ''
+            {gameState.phase === 'assign' && (
+                <AssignRole
+                    uid={uid ?? ''}
+                    gameState={gameState}
+                    onClick={setReady}
+                />
             )}
             {gameState.phase === 'turn' &&
             gameState.players[gameState.currentTurn].uid === uid ? (

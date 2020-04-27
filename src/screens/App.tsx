@@ -31,10 +31,6 @@ const App: React.FC<AppProps> = ({ roomId, inGame, joinGame }) => {
             })
             .finally(() => {
                 establishPresence();
-                // const allUserStatus = db.ref(`/status/`);
-                // allUserStatus.on('value', (snapshot) => {
-                //     console.log(snapshot.val());
-                // });
                 (async () => {
                     const rejoinGameId = await dbRejoinGame();
                     if (rejoinGameId) {
@@ -43,7 +39,6 @@ const App: React.FC<AppProps> = ({ roomId, inGame, joinGame }) => {
                 })();
             });
     }, [joinGame]);
-    console.log(`App.tsx gameId: `);
 
     return (
         <Flex

@@ -27,7 +27,6 @@ const Lobby = (props: LobbyProps) => {
                 const snapVal = snap.val();
 
                 if (snapVal == null) return;
-                console.log('value changed!');
                 joinGame(gameId);
             });
         })(roomId);

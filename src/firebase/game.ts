@@ -28,11 +28,8 @@ export const dbRejoinGame = async () => {
         const allGames = (await allGamesRef.once('value')).val();
         if (allGames == null) return null;
         const games: [string, GameStateType][] = Object.entries(allGames);
-        console.log(uid);
-        console.log(games);
         for (let i = 0; i < games.length; i++) {
             const [gameId, game] = games[i];
-            console.log(game.players.map((x) => x.uid));
             if (game.players.some((x) => x.uid === uid)) {
                 return gameId;
             }

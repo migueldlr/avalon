@@ -1,7 +1,9 @@
+export type Role = 'bad' | 'good' | 'merlin' | 'assassin';
+
 export interface PlayerType {
     uid: string;
     name: string;
-    role: string;
+    role: Role;
 }
 
 export interface GameStateType {
