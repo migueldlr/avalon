@@ -27,6 +27,7 @@ const getRoles = (n: number): string[] => {
 interface GameStateType {
     phase: 'assign' | 'turn';
     numPlayers: number;
+    order: number[];
 }
 
 interface GameInType {
@@ -43,7 +44,10 @@ const updateGame = (
             `${Object.values(gameIn.ready).length} ${gameState.numPlayers}`,
         );
         if (Object.values(gameIn.ready).length === gameState.numPlayers) {
-            return gameRef.child('phase').set('turn');
+            return gameRef.update({
+                phase: 'turn',
+                currentTurn: gameState.order[0],
+            });
         }
     }
     return null;
@@ -77,7 +81,6 @@ export const createGame = functions.https.onCall(async (data, context) => {
         uid: k,
         name: u.name,
         role: roles[i],
-        order: shuffle([...Array(numPlayers).keys()]),
     }));
 
     const gameId = roomId;
@@ -87,6 +90,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
             numPlayers: players.length,
             players,
             phase: 'assign',
+            order: shuffle([...Array(numPlayers).keys()]),
         })
         .catch((err) => {
             throw new functions.https.HttpsError('internal', err);
