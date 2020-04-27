@@ -1,5 +1,5 @@
 export interface GameState {
-    inGame: boolean;
+    gameId: string | null;
 }
 
 export const JOIN_GAME = 'JOIN_GAME';

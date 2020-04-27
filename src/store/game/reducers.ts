@@ -1,7 +1,7 @@
 import { JOIN_GAME, GameState, GameActionTypes } from './types';
 
 const initialState: GameState = {
-    inGame: false,
+    gameId: null,
 };
 
 export const gameReducer = (
@@ -10,7 +10,8 @@ export const gameReducer = (
 ): GameState => {
     switch (action.type) {
         case JOIN_GAME: {
-            return { ...state, inGame: true };
+            const { gameId } = action.payload;
+            return { ...state, gameId };
         }
         default:
             return state;

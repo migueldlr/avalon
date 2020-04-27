@@ -24,10 +24,18 @@ const getRoles = (n: number): string[] => {
     return roles;
 };
 
+interface PlayerType {
+    uid: string;
+    name: string;
+    role: string;
+}
+
 interface GameStateType {
     phase: 'assign' | 'turn';
     numPlayers: number;
     order: number[];
+    currentTurn: number;
+    players: Array<PlayerType>;
 }
 
 interface GameInType {
@@ -46,7 +54,7 @@ const updateGame = (
         if (Object.values(gameIn.ready).length === gameState.numPlayers) {
             return gameRef.update({
                 phase: 'turn',
-                currentTurn: gameState.order[0],
+                currentTurn: 0,
             });
         }
     }

@@ -5,24 +5,29 @@ import { AppState } from '../store/index';
 
 import { dbGetGameRef } from '../firebase/game';
 import { db, auth } from '../firebase/index';
+import { GameStateType } from '../types';
 
 interface GameProps {
     gameId: string;
 }
 
-interface GameState {
-    phase: 'assign' | 'start';
-}
-
 const Game = (props: GameProps) => {
     const { gameId } = props;
     const uid = auth.currentUser?.uid;
-    const [gameState, setGameState] = useState<GameState>({ phase: 'start' });
+    const [gameState, setGameState] = useState<GameStateType>({
+        phase: 'start',
+        numPlayers: 0,
+        order: [],
+        currentTurn: -1,
+        players: [],
+    });
 
     useEffect(() => {
+        console.log(gameId);
         const gameRef = dbGetGameRef(gameId);
         gameRef.on('value', (snap) => {
             const snapVal = snap.val();
+            console.log(JSON.stringify(snapVal));
 
             if (snapVal == null) return;
             console.log('value changed!');
@@ -34,6 +39,8 @@ const Game = (props: GameProps) => {
         await db.ref(`gameIn/${gameId}/ready/${uid}`).set(true);
     };
 
+    console.log(gameState);
+
     return (
         <Box>
             <Text>Game</Text>
@@ -44,10 +51,17 @@ const Game = (props: GameProps) => {
             ) : (
                 ''
             )}
+            {gameState.phase === 'turn' &&
+            gameState.players[gameState.currentTurn].uid === uid ? (
+                <Text>It's your turn!</Text>
+            ) : (
+                ''
+            )}
+            <Text></Text>
         </Box>
     );
 };
 
 export default connect((state: AppState) => ({
-    gameId: state.rooms.roomId ?? '',
+    gameId: state.game.gameId ?? '',
 }))(Game);
