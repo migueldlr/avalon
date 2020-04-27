@@ -7,6 +7,7 @@ import { dbGetGameRef } from '../firebase/game';
 import { db, auth } from '../firebase/index';
 import { GameStateType } from '../types';
 import AssignRole from '../components/AssignRole';
+import PickTeam from '../components/PickTeam';
 
 interface GameProps {
     gameId: string;
@@ -37,11 +38,17 @@ const Game = (props: GameProps) => {
         await db.ref(`gameIn/${gameId}/ready/${uid}`).set(true);
     };
 
+    const setProposedTeam = async (players: string[]) => {
+        await db.ref(`gameIn/${gameId}/proposed`).set(JSON.stringify(players));
+    };
+
+    console.log(gameState);
+
     return (
         <Box>
             <Text>Game</Text>
-            <Text>{gameId ?? ''}</Text>
-            <Text>{JSON.stringify(gameState)}</Text>
+            {/* <Text>{gameId ?? ''}</Text>
+            <Text>{JSON.stringify(gameState)}</Text> */}
             {gameState.phase === 'assign' && (
                 <AssignRole
                     uid={uid ?? ''}
@@ -50,11 +57,12 @@ const Game = (props: GameProps) => {
                 />
             )}
             {gameState.phase === 'turn' &&
-            gameState.players[gameState.currentTurn].uid === uid ? (
-                <Text>It's your turn!</Text>
-            ) : (
-                ''
-            )}
+                gameState.players[gameState.currentTurn].uid === uid && (
+                    <PickTeam
+                        gameState={gameState}
+                        submitTeam={setProposedTeam}
+                    />
+                )}
             <Text></Text>
         </Box>
     );
