@@ -35,28 +35,38 @@ const VoteQuest = (props: VoteQuestProps) => {
         setVoted(true);
         dbSetVote(v);
     };
-
-    return (
-        <Box>
-            <Text>
-                You are on a quest with{' '}
-                {questers.filter((n) => n !== thisPlayer?.name)}
-            </Text>
-            <Text>Do you advance the quest?</Text>
-            <Button
-                onClick={() => handleVote(true)}
-                variant={!voted ? 'primary' : vote ? 'selected' : 'disabled'}
-                disabled={voted}>
-                Success!
-            </Button>
-            <Button
-                onClick={() => handleVote(false)}
-                variant={!voted ? 'primary' : !vote ? 'selected' : 'disabled'}
-                disabled={voted}>
-                Failure...
-            </Button>
-        </Box>
-    );
+    if (
+        gameState.proposed[gameState.currentQuest][
+            gameState.currentTeamVote
+        ].some((u) => u === uid)
+    ) {
+        return (
+            <Box>
+                <Text>
+                    You are on a quest with{' '}
+                    {questers.filter((n) => n !== thisPlayer?.name)}
+                </Text>
+                <Text>Do you advance the quest?</Text>
+                <Button
+                    onClick={() => handleVote(true)}
+                    variant={
+                        !voted ? 'primary' : vote ? 'selected' : 'disabled'
+                    }
+                    disabled={voted}>
+                    Success!
+                </Button>
+                <Button
+                    onClick={() => handleVote(false)}
+                    variant={
+                        !voted ? 'primary' : !vote ? 'selected' : 'disabled'
+                    }
+                    disabled={voted}>
+                    Failure...
+                </Button>
+            </Box>
+        );
+    }
+    return <Box>{JSON.stringify(questers)} are on the quest...</Box>;
 };
 
 export default VoteQuest;

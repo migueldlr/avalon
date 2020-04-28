@@ -11,7 +11,8 @@ interface VoteTeamProps {
 const VoteTeam = (props: VoteTeamProps) => {
     const { gameState, gameId } = props;
     const uid = auth.currentUser?.uid;
-    const proposer = gameState.players[gameState.currentTurn].name;
+    const proposer =
+        gameState.players[gameState.order[gameState.currentTurn]].name;
     const proposedUids: string[] =
         gameState.proposed[gameState.currentQuest][gameState.currentTeamVote];
     const proposed = proposedUids.map(

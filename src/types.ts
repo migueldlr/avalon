@@ -27,6 +27,7 @@ export interface GameStateType {
     players: Array<PlayerType>;
     proposed: string[][][];
     finalResult: 'good' | 'bad';
+    rejects: number;
 }
 
 export interface GameInType {

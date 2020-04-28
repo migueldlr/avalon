@@ -12,6 +12,7 @@ import VoteTeam from '../components/VoteTeam';
 import VoteQuest from '../components/VoteQuest';
 import DecisionDisplay from '../components/DecisionDisplay';
 import AssassinPick from '../components/AssassinPick';
+import GameStateDisplay from '../components/GameStateDisplay';
 
 interface GameProps {
     gameId: string;
@@ -33,6 +34,7 @@ const Game = (props: GameProps) => {
         questResults: [],
         questVote: [],
         finalResult: 'good',
+        rejects: -1,
     });
 
     useEffect(() => {
@@ -62,8 +64,11 @@ const Game = (props: GameProps) => {
     return (
         <Box>
             <Text>Game</Text>
-            {/* <Text>{gameId ?? ''}</Text>
-            <Text>{JSON.stringify(gameState)}</Text> */}
+            {gameState.phase !== 'start' &&
+                gameState.phase !== 'assign' &&
+                gameState.phase !== 'decision' && (
+                    <GameStateDisplay gameState={gameState} />
+                )}
             {gameState.phase === 'assign' && (
                 <AssignRole
                     uid={uid ?? ''}
@@ -71,22 +76,15 @@ const Game = (props: GameProps) => {
                     onClick={setReady}
                 />
             )}
-            {gameState.phase === 'turn' &&
-                gameState.players[gameState.currentTurn].uid === uid && (
-                    <PickTeam
-                        gameState={gameState}
-                        submitTeam={setProposedTeam}
-                    />
-                )}
+            {gameState.phase === 'turn' && (
+                <PickTeam gameState={gameState} submitTeam={setProposedTeam} />
+            )}
             {gameState.phase === 'voteTeam' && (
                 <VoteTeam gameState={gameState} gameId={gameId} />
             )}
-            {gameState.phase === 'voteQuest' &&
-                gameState.proposed[gameState.currentQuest][
-                    gameState.currentTeamVote
-                ].some((u) => u === uid) && (
-                    <VoteQuest gameState={gameState} gameId={gameId} />
-                )}
+            {gameState.phase === 'voteQuest' && (
+                <VoteQuest gameState={gameState} gameId={gameId} />
+            )}
             {gameState.phase === 'decision' && (
                 <DecisionDisplay gameState={gameState} gameId={gameId} />
             )}

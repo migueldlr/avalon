@@ -60,6 +60,7 @@ interface GameStateType {
     quests: number[];
     players: Array<PlayerType>;
     finalResult: 'good' | 'bad';
+    rejects: number;
 }
 
 interface GameInType {
@@ -111,18 +112,25 @@ const updateGame = (
             gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote],
         ).filter((v) => v).length;
         if (yeas > 0.5 * gameState.numPlayers) {
-            return Promise.all([
-                gameRef.update({
+            return gameInRef.update({ questVote: [] }).then(() => {
+                return gameRef.update({
                     phase: 'voteQuest',
-                }),
-                gameInRef.update({ questVote: [] }),
-            ]);
+                });
+            });
+        }
+        // five rejections in a row, so bad guys auto-win
+        if (gameState.rejects >= 4) {
+            return gameRef.update({
+                phase: 'end',
+                finalResult: 'bad',
+            });
         }
         return Promise.all([
             gameRef.update({
                 phase: 'turn',
                 currentTurn: (gameState.currentTurn + 1) % gameState.numPlayers,
                 currentTeamVote: gameState.currentTeamVote + 1,
+                rejects: gameState.rejects + 1,
             }),
         ]);
     } else if (
@@ -168,15 +176,13 @@ const updateGame = (
             });
         }
         if (gameState.currentQuest <= 3) {
-            return Promise.all([
-                gameRef.update({
-                    phase: 'turn',
-                    currentTurn:
-                        (gameState.currentTurn + 1) % gameState.numPlayers,
-                    currentQuest: gameState.currentQuest + 1,
-                    currentTeamVote: 0,
-                }),
-            ]);
+            return gameRef.update({
+                phase: 'turn',
+                currentTurn: (gameState.currentTurn + 1) % gameState.numPlayers,
+                currentQuest: gameState.currentQuest + 1,
+                currentTeamVote: 0,
+                rejects: 0,
+            });
         }
     } else if (gameState.phase === 'assassin' && gameIn.assassinPick) {
         if (
@@ -238,6 +244,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
             currentQuest: 0,
             currentTeamVote: 0,
             questResults: [],
+            rejects: 0,
         })
         .catch((err) => {
             throw new functions.https.HttpsError('internal', err);
