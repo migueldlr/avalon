@@ -10,6 +10,7 @@ import AssignRole from '../components/AssignRole';
 import PickTeam from '../components/PickTeam';
 import VoteTeam from '../components/VoteTeam';
 import VoteQuest from '../components/VoteQuest';
+import DecisionDisplay from '../components/DecisionDisplay';
 
 interface GameProps {
     gameId: string;
@@ -77,6 +78,9 @@ const Game = (props: GameProps) => {
                 gameState.proposed.some((u) => u === uid) && (
                     <VoteQuest gameState={gameState} gameId={gameId} />
                 )}
+            {gameState.phase === 'decision' && (
+                <DecisionDisplay gameState={gameState} gameId={gameId} />
+            )}
             <Text></Text>
         </Box>
     );

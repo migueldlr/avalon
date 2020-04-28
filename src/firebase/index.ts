@@ -15,6 +15,11 @@ firebase.initializeApp({
     measurementId: 'G-59CTFLXESZ',
 });
 
+// let fns = firebase.functions();
+// // eslint-disable-next-line no-restricted-globals
+// if (location.hostname === 'localhost')
+//     fns.useFunctionsEmulator('http://localhost:5001');
+
 firebase
     .auth()
     .setPersistence(firebase.auth.Auth.Persistence.SESSION)
