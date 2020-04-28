@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import { Box, Text, Button, Flex } from "theme-ui";
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import { Box, Text, Button, Flex } from 'theme-ui';
 
-import { leaveRoom } from "../store/room/actions";
-import { joinGame } from "../store/game/actions";
-import { dbLeaveRoom, dbGetRoomRef } from "../firebase/rooms";
-import { AppState } from "../store";
-import { dbCreateGame, dbGetGameRef } from "../firebase/game";
-import { auth } from "../firebase/index";
+import { leaveRoom } from '../store/room/actions';
+import { joinGame } from '../store/game/actions';
+import { dbLeaveRoom, dbGetRoomRef } from '../firebase/rooms';
+import { AppState } from '../store';
+import { dbCreateGame, dbGetGameRef } from '../firebase/game';
+import { auth } from '../firebase/index';
 
 interface LobbyProps {
     roomId: string | null;
@@ -20,8 +20,8 @@ const Lobby = (props: LobbyProps) => {
     const uid = auth.currentUser?.uid;
     const [userList, setUserList] = useState<Array<string>>([]);
     const [host, setHost] = useState<{ name: string; uid: string }>({
-        name: "",
-        uid: "",
+        name: '',
+        uid: '',
     });
 
     useEffect(() => {
@@ -29,7 +29,7 @@ const Lobby = (props: LobbyProps) => {
         // IIFE to register listener for game start
         ((gameId: string) => {
             const gameRef = dbGetGameRef(gameId);
-            gameRef.on("value", (snap) => {
+            gameRef.on('value', (snap) => {
                 const snapVal = snap.val();
 
                 if (snapVal == null) return;
@@ -38,7 +38,7 @@ const Lobby = (props: LobbyProps) => {
         })(roomId);
 
         const roomRef = dbGetRoomRef(roomId);
-        roomRef.on("value", (snap) => {
+        roomRef.on('value', (snap) => {
             const snapVal = snap.val();
 
             // firestore will update before redux sometimes so we don't want to try to read from snapVal yet
@@ -47,7 +47,7 @@ const Lobby = (props: LobbyProps) => {
             const data: Array<{ name: string }> = Object.values(snapVal);
             setUserList(data.map((u) => u.name));
         });
-        roomRef.once("value").then(function (dataSnapshot) {
+        roomRef.once('value').then(function (dataSnapshot) {
             const val: {
                 [uid: string]: { host: boolean; name: string };
             } = dataSnapshot.val(); // get the data at this ref
@@ -65,7 +65,7 @@ const Lobby = (props: LobbyProps) => {
 
     const handleLeaveRoom = async () => {
         if (roomId == null) {
-            console.error("Room ID not found");
+            console.error('Room ID not found');
             return;
         }
         props.leaveRoom();
@@ -85,14 +85,13 @@ const Lobby = (props: LobbyProps) => {
                 onClick={() => {
                     navigator.clipboard.writeText(roomId);
                 }}
-                variant="copy"
-            >
+                variant="copy">
                 {roomId}
             </Button>
-            <Flex sx={{ flexDirection: "column" }}>
+            <Flex sx={{ flexDirection: 'column' }}>
                 {userList.map((uname) => (
                     <Text key={uname}>
-                        {host.name === uname ? "👑" : ""}
+                        {host.name === uname ? '👑' : ''}
                         {uname}
                     </Text>
                 ))}
