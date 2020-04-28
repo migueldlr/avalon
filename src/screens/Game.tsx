@@ -11,6 +11,7 @@ import PickTeam from '../components/PickTeam';
 import VoteTeam from '../components/VoteTeam';
 import VoteQuest from '../components/VoteQuest';
 import DecisionDisplay from '../components/DecisionDisplay';
+import AssassinPick from '../components/AssassinPick';
 
 interface GameProps {
     gameId: string;
@@ -27,9 +28,11 @@ const Game = (props: GameProps) => {
         players: [],
         proposed: [],
         currentQuest: -1,
+        currentTeamVote: -1,
         quests: [],
         questResults: [],
         questVote: [],
+        finalResult: 'good',
     });
 
     useEffect(() => {
@@ -47,7 +50,11 @@ const Game = (props: GameProps) => {
     };
 
     const setProposedTeam = async (players: string[]) => {
-        await db.ref(`gameIn/${gameId}/proposed`).set(players);
+        await db
+            .ref(
+                `gameIn/${gameId}/proposed/${gameState.currentQuest}/${gameState.currentTeamVote}`,
+            )
+            .set(players);
     };
 
     console.log(gameState);
@@ -75,12 +82,23 @@ const Game = (props: GameProps) => {
                 <VoteTeam gameState={gameState} gameId={gameId} />
             )}
             {gameState.phase === 'voteQuest' &&
-                gameState.proposed.some((u) => u === uid) && (
+                gameState.proposed[gameState.currentQuest][
+                    gameState.currentTeamVote
+                ].some((u) => u === uid) && (
                     <VoteQuest gameState={gameState} gameId={gameId} />
                 )}
             {gameState.phase === 'decision' && (
                 <DecisionDisplay gameState={gameState} gameId={gameId} />
             )}
+            {gameState.phase === 'assassin' && (
+                <AssassinPick gameState={gameState} gameId={gameId} />
+            )}
+            {gameState.phase === 'end' &&
+                (gameState.finalResult === 'bad' ? (
+                    <Text>Evil wins!</Text>
+                ) : (
+                    <Text>Good wins!</Text>
+                ))}
             <Text></Text>
         </Box>
     );

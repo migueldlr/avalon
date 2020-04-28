@@ -12,7 +12,8 @@ const VoteTeam = (props: VoteTeamProps) => {
     const { gameState, gameId } = props;
     const uid = auth.currentUser?.uid;
     const proposer = gameState.players[gameState.currentTurn].name;
-    const proposedUids: string[] = gameState.proposed;
+    const proposedUids: string[] =
+        gameState.proposed[gameState.currentQuest][gameState.currentTeamVote];
     const proposed = proposedUids.map(
         (u) => gameState.players.find((p) => p.uid === u)?.name,
     );
@@ -21,7 +22,9 @@ const VoteTeam = (props: VoteTeamProps) => {
     const [vote, setVote] = useState<boolean | null>(null);
 
     const dbSetVote = (v: boolean) => {
-        db.ref(`gameIn/${gameId}/teamVote/${uid}`)
+        db.ref(
+            `gameIn/${gameId}/teamVote/${gameState.currentQuest}/${gameState.currentTeamVote}/${uid}`,
+        )
             .set(v)
             .catch((err) => {
                 console.log(err);

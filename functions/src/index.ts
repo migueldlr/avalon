@@ -42,23 +42,33 @@ interface PlayerType {
 }
 
 interface GameStateType {
-    phase: 'assign' | 'turn' | 'voteTeam' | 'voteQuest' | 'decision';
+    phase:
+        | 'assign'
+        | 'turn'
+        | 'voteTeam'
+        | 'voteQuest'
+        | 'decision'
+        | 'end'
+        | 'assassin';
     numPlayers: number;
     order: number[];
     currentTurn: number;
     currentQuest: number;
+    currentTeamVote: number;
     questResults: boolean[];
     questVote: boolean[];
     quests: number[];
     players: Array<PlayerType>;
+    finalResult: 'good' | 'bad';
 }
 
 interface GameInType {
     ready: { [uid: string]: boolean };
-    teamVote: { [uid: string]: boolean };
+    teamVote: { [uid: string]: boolean }[][];
     questVote: { [uid: string]: boolean };
     continue: { [uid: string]: number };
-    proposed: string[];
+    proposed: string[][][];
+    assassinPick: string;
 }
 
 const updateGame = (
@@ -79,32 +89,40 @@ const updateGame = (
                 currentTurn: 0,
             });
         }
-    } else if (gameState.phase === 'turn' && gameIn.proposed) {
+    } else if (
+        gameState.phase === 'turn' &&
+        gameIn.proposed[gameState.currentQuest][gameState.currentTeamVote]
+    ) {
         console.log(1);
         return gameRef.update({
             phase: 'voteTeam',
-            proposed: gameIn.proposed,
+            [`proposed/${gameState.currentQuest}/${gameState.currentTeamVote}`]: gameIn
+                .proposed[gameState.currentQuest][gameState.currentTeamVote],
         });
     } else if (
         gameState.phase === 'voteTeam' &&
-        Object.values(gameIn.teamVote).length === gameState.numPlayers
+        Object.values(
+            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote],
+        ).length === gameState.numPlayers
     ) {
         console.log(2);
 
-        const yeas = Object.values(gameIn.teamVote).filter((v) => v).length;
+        const yeas = Object.values(
+            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote],
+        ).filter((v) => v).length;
         if (yeas > 0.5 * gameState.numPlayers) {
-            return gameRef.update({
-                phase: 'voteQuest',
-            });
+            return Promise.all([
+                gameRef.update({
+                    phase: 'voteQuest',
+                }),
+                gameInRef.update({ questVote: [] }),
+            ]);
         }
         return Promise.all([
             gameRef.update({
                 phase: 'turn',
                 currentTurn: (gameState.currentTurn + 1) % gameState.numPlayers,
-            }),
-            gameInRef.update({
-                proposed: [],
-                teamVote: [],
+                currentTeamVote: gameState.currentTeamVote + 1,
             }),
         ]);
     } else if (
@@ -124,7 +142,10 @@ const updateGame = (
             questVote: Object.values(gameIn.questVote),
         };
 
-        return Promise.all([gameRef.update(gameUpdate), gameInRef.set(null)]);
+        return Promise.all([
+            gameRef.update(gameUpdate),
+            gameInRef.update({ ready: [] }),
+        ]);
     } else if (
         gameState.phase === 'decision' &&
         Object.values(gameIn.ready).length === gameState.numPlayers
@@ -132,21 +153,45 @@ const updateGame = (
         console.log(4);
 
         console.log('happens');
-        return Promise.all([
-            gameInRef.set(null),
-            gameRef.update({
-                phase: 'turn',
-                currentTurn: (gameState.currentTurn + 1) % gameState.numPlayers,
-                currentQuest: gameState.currentQuest + 1,
-            }),
-        ]);
-        // return gameInRef.set(null).then(() => {
-        //     return gameRef.update({
-        //         phase: 'turn',
-        //         currentTurn: (gameState.currentTurn + 1) % gameState.numPlayers,
-        //         currentQuest: gameState.currentQuest + 1,
-        //     });
-        // });
+        // all quests are done
+        // bad guys auto-win
+        if (gameState.questResults.filter((x) => !x).length >= 3) {
+            return gameRef.update({
+                phase: 'end',
+                finalResult: 'bad',
+            });
+        }
+        // assassin phase
+        if (gameState.questResults.filter((x) => x).length >= 3) {
+            return gameRef.update({
+                phase: 'assassin',
+            });
+        }
+        if (gameState.currentQuest <= 3) {
+            return Promise.all([
+                gameRef.update({
+                    phase: 'turn',
+                    currentTurn:
+                        (gameState.currentTurn + 1) % gameState.numPlayers,
+                    currentQuest: gameState.currentQuest + 1,
+                    currentTeamVote: 0,
+                }),
+            ]);
+        }
+    } else if (gameState.phase === 'assassin' && gameIn.assassinPick) {
+        if (
+            gameIn.assassinPick ===
+            gameState.players.find((p) => p.role === 'merlin')?.name
+        ) {
+            return gameRef.update({
+                phase: 'end',
+                finalResult: 'bad',
+            });
+        }
+        return gameRef.update({
+            phase: 'end',
+            finalResult: 'good',
+        });
     }
     return null;
 };
@@ -191,6 +236,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
             order: shuffle([...Array(numPlayers).keys()]),
             quests: getQuests(numPlayers),
             currentQuest: 0,
+            currentTeamVote: 0,
             questResults: [],
         })
         .catch((err) => {

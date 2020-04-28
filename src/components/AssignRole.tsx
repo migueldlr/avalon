@@ -28,6 +28,11 @@ const AssignRole = (props: AssignRoleProps) => {
         }, 2000);
     }, []);
 
+    const handleClick = () => {
+        onClick();
+        setCanClick(false);
+    };
+
     const thisPlayer = gameState.players.find((p) => p.uid === uid);
 
     const baddies = gameState.players
@@ -55,12 +60,14 @@ const AssignRole = (props: AssignRoleProps) => {
                     )}
                 </>
             )}
-            <Button
-                disabled={!canClick}
-                variant={!canClick ? 'disabled' : 'primary'}
-                onClick={onClick}>
-                Ready!
-            </Button>
+            {canClick && (
+                <Button
+                    disabled={!canClick}
+                    variant={!canClick ? 'disabled' : 'primary'}
+                    onClick={handleClick}>
+                    Ready!
+                </Button>
+            )}
         </Box>
     );
 };
