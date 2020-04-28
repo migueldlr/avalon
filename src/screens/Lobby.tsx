@@ -7,6 +7,7 @@ import { joinGame } from '../store/game/actions';
 import { dbLeaveRoom, dbGetRoomRef } from '../firebase/rooms';
 import { AppState } from '../store';
 import { dbCreateGame, dbGetGameRef } from '../firebase/game';
+import { auth } from '../firebase/index';
 
 interface LobbyProps {
     roomId: string | null;
@@ -16,7 +17,12 @@ interface LobbyProps {
 
 const Lobby = (props: LobbyProps) => {
     const { roomId, joinGame } = props;
+    const uid = auth.currentUser?.uid;
     const [userList, setUserList] = useState<Array<string>>([]);
+    const [host, setHost] = useState<{ name: string; uid: string }>({
+        name: '',
+        uid: '',
+    });
 
     useEffect(() => {
         if (roomId == null) return;
@@ -41,6 +47,14 @@ const Lobby = (props: LobbyProps) => {
             const data: Array<{ name: string }> = Object.values(snapVal);
             setUserList(data.map((u) => u.name));
         });
+        roomRef.once('value').then(function (dataSnapshot) {
+            const val: {
+                [uid: string]: { host: boolean; name: string };
+            } = dataSnapshot.val(); // get the data at this ref
+            const hostIndex = Object.values(val).findIndex((e) => e.host);
+            const hostObj = Object.entries(val)[hostIndex];
+            setHost({ uid: hostObj[0], name: hostObj[1].name });
+        });
     }, [roomId, joinGame]);
     if (roomId == null)
         return (
@@ -64,6 +78,7 @@ const Lobby = (props: LobbyProps) => {
         props.joinGame(gameId);
     };
 
+    const isHost = host.uid === uid;
     return (
         <Box>
             <Button
@@ -75,10 +90,13 @@ const Lobby = (props: LobbyProps) => {
             </Button>
             <Flex sx={{ flexDirection: 'column' }}>
                 {userList.map((uname) => (
-                    <Text key={uname}>{uname}</Text>
+                    <Text key={uname}>
+                        {host.name === uname ? '👑' : ''}
+                        {uname}
+                    </Text>
                 ))}
             </Flex>
-            <Button onClick={handleCreateGame}>Start Game</Button>
+            {isHost && <Button onClick={handleCreateGame}>Start Game</Button>}
             <Button onClick={handleLeaveRoom}>Leave Room</Button>
         </Box>
     );
