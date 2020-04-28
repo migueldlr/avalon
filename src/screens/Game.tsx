@@ -9,6 +9,7 @@ import { GameStateType } from '../types';
 import AssignRole from '../components/AssignRole';
 import PickTeam from '../components/PickTeam';
 import VoteTeam from '../components/VoteTeam';
+import VoteQuest from '../components/VoteQuest';
 
 interface GameProps {
     gameId: string;
@@ -23,7 +24,11 @@ const Game = (props: GameProps) => {
         order: [],
         currentTurn: -1,
         players: [],
-        proposed: '',
+        proposed: [],
+        currentQuest: -1,
+        quests: [],
+        questResults: [],
+        questVote: [],
     });
 
     useEffect(() => {
@@ -41,7 +46,7 @@ const Game = (props: GameProps) => {
     };
 
     const setProposedTeam = async (players: string[]) => {
-        await db.ref(`gameIn/${gameId}/proposed`).set(JSON.stringify(players));
+        await db.ref(`gameIn/${gameId}/proposed`).set(players);
     };
 
     console.log(gameState);
@@ -66,8 +71,12 @@ const Game = (props: GameProps) => {
                     />
                 )}
             {gameState.phase === 'voteTeam' && (
-                <VoteTeam gameState={gameState} />
+                <VoteTeam gameState={gameState} gameId={gameId} />
             )}
+            {gameState.phase === 'voteQuest' &&
+                gameState.proposed.some((u) => u === uid) && (
+                    <VoteQuest gameState={gameState} gameId={gameId} />
+                )}
             <Text></Text>
         </Box>
     );

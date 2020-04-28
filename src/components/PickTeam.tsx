@@ -35,7 +35,18 @@ const PickTeam = (props: PickTeamProps) => {
                     {p.name}
                 </Label>
             ))}
-            <Button onClick={handleSubmit}>Onward!</Button>
+            <Button
+                disabled={
+                    selected.length !== gameState.quests[gameState.currentQuest]
+                }
+                variant={
+                    selected.length !== gameState.quests[gameState.currentQuest]
+                        ? 'disabled'
+                        : 'primary'
+                }
+                onClick={handleSubmit}>
+                Onward!
+            </Button>
         </Box>
     );
 };

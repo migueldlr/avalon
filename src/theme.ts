@@ -43,12 +43,18 @@ export default {
     buttons: {
         primary: {
             transition: 'color 1s',
+            '&:hover': {
+                bg: '#8b53bc',
+            },
         },
         disabled: {
             bg: '#dca8ff',
         },
         copy: {
             bg: '#8c44d4',
+        },
+        selected: {
+            bg: '#2c154a',
         },
     },
 };
