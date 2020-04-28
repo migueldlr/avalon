@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { Box, Text, Button, Flex } from "theme-ui";
+import { Box, Text, Button, Flex, Checkbox, Label } from "theme-ui";
 
 import { leaveRoom } from "../store/room/actions";
 import { joinGame } from "../store/game/actions";
@@ -23,6 +23,7 @@ const Lobby = (props: LobbyProps) => {
         name: "",
         uid: "",
     });
+    const [selected, setSelected] = useState<string[]>([]);
 
     useEffect(() => {
         if (roomId == null) return;
@@ -78,6 +79,19 @@ const Lobby = (props: LobbyProps) => {
         props.joinGame(gameId);
     };
 
+    const handleSelect = (
+        e: React.MouseEvent<HTMLInputElement, MouseEvent>
+    ) => {
+        const target = e.target as HTMLInputElement;
+        let newSelected = [...selected];
+        if (target.checked) {
+            newSelected.push(target.name);
+        } else {
+            newSelected = newSelected.filter((x) => x !== target.name);
+        }
+        setSelected(newSelected);
+    };
+
     const isHost = host.uid === uid;
     return (
         <Box>
@@ -97,7 +111,21 @@ const Lobby = (props: LobbyProps) => {
                     </Text>
                 ))}
             </Flex>
-            {isHost && <Button onClick={handleCreateGame}>Start Game</Button>}
+            <Flex sx={{ flexDirection: "row" }}>
+                {isHost && (
+                    <Button onClick={handleCreateGame}>Start Game</Button>
+                )}
+                <Box>
+                    <Label key="Add Percival and Morgana?">
+                        <Checkbox
+                            name="Add Percival and Morgana?"
+                            onClick={handleSelect}
+                        />
+                        {"Add Percival and Morgana?"}
+                    </Label>
+                </Box>
+            </Flex>
+
             <Button onClick={handleLeaveRoom}>Leave Room</Button>
         </Box>
     );
