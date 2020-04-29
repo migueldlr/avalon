@@ -29,6 +29,7 @@ const VoteTeam = (props: VoteTeamProps) => {
         )
             .set(v)
             .catch((err) => {
+                // eslint-disable-next-line no-console
                 console.log(err);
             });
     };

@@ -8,6 +8,7 @@ export const dbCreateGame = async (roomId: string): Promise<string | null> => {
         const { gameId } = res.data;
         return gameId;
     } catch (err) {
+        // eslint-disable-next-line no-console
         console.log(err);
         return null;
     }

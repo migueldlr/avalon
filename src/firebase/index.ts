@@ -1,4 +1,4 @@
-import * as firebase from 'firebase';
+import * as firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
 import 'firebase/database';
@@ -14,11 +14,6 @@ firebase.initializeApp({
     appId: '1:665545464872:web:87e637133856d40f5ba91d',
     measurementId: 'G-59CTFLXESZ',
 });
-
-// let fns = firebase.functions();
-// // eslint-disable-next-line no-restricted-globals
-// if (location.hostname === 'localhost')
-//     fns.useFunctionsEmulator('http://localhost:5001');
 
 firebase
     .auth()
@@ -36,6 +31,7 @@ firebase
         const errorCode = error.code;
         const errorMessage = error.message;
 
+        // eslint-disable-next-line no-console
         console.log(`${errorCode} ${errorMessage}`);
     });
 
