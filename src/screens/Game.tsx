@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Flex, Text } from 'theme-ui';
+import { Flex } from 'theme-ui';
 import { AppState } from '../store/index';
 
 import { dbGetGameRef } from '../firebase/game';
-import { db, auth } from '../firebase/index';
 import { GameStateType } from '../types';
 import AssignRole from '../components/AssignRole';
 import PickTeam from '../components/PickTeam';
@@ -21,7 +20,6 @@ interface GameProps {
 
 const Game = (props: GameProps) => {
     const { gameId } = props;
-    const uid = auth.currentUser?.uid;
     const [gameState, setGameState] = useState<GameStateType>({
         phase: 'start',
         numPlayers: 0,
@@ -50,20 +48,6 @@ const Game = (props: GameProps) => {
         });
     }, [gameId]);
 
-    const setReady = async () => {
-        await db.ref(`gameIn/${gameId}/ready/${uid}`).set(true);
-    };
-
-    const setProposedTeam = async (players: string[]) => {
-        await db
-            .ref(
-                `gameIn/${gameId}/proposed/${gameState.currentQuest}/${gameState.currentTeamVote}`,
-            )
-            .set(players);
-    };
-
-    console.log(gameState);
-
     return (
         <Flex sx={{ flexDirection: 'column', alignItems: 'center' }}>
             {gameState.phase !== 'start' &&
@@ -72,14 +56,10 @@ const Game = (props: GameProps) => {
                     <GameStateDisplay gameState={gameState} />
                 )}
             {gameState.phase === 'assign' && (
-                <AssignRole
-                    uid={uid ?? ''}
-                    gameState={gameState}
-                    onClick={setReady}
-                />
+                <AssignRole gameState={gameState} gameId={gameId} />
             )}
             {gameState.phase === 'turn' && (
-                <PickTeam gameState={gameState} submitTeam={setProposedTeam} />
+                <PickTeam gameState={gameState} gameId={gameId} />
             )}
             {gameState.phase === 'voteTeam' && (
                 <VoteTeam gameState={gameState} gameId={gameId} />
@@ -94,7 +74,6 @@ const Game = (props: GameProps) => {
                 <AssassinPick gameState={gameState} gameId={gameId} />
             )}
             {gameState.phase === 'end' && <EndDisplay gameState={gameState} />}
-            <Text></Text>
         </Flex>
     );
 };

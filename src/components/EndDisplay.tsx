@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Text } from 'theme-ui';
+import { Text } from 'theme-ui';
 import { GameStateType } from '../types';
 
 interface EndDisplayProps {

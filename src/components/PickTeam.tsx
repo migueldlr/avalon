@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
 import { Box, Text, Button, Checkbox, Label } from 'theme-ui';
 import { GameStateType } from '../types';
-import { auth } from '../firebase/index';
+import { db, auth } from '../firebase/index';
 
 interface PickTeamProps {
     gameState: GameStateType;
-    submitTeam: (x: string[]) => void;
+    gameId: string;
 }
 
 const PickTeam = (props: PickTeamProps) => {
-    const { gameState, submitTeam } = props;
+    const { gameState, gameId } = props;
     const uid = auth.currentUser?.uid;
     const [selected, setSelected] = useState<string[]>([]);
+    const submitTeam = async (players: string[]) => {
+        await db
+            .ref(
+                `gameIn/${gameId}/proposed/${gameState.currentQuest}/${gameState.currentTeamVote}`,
+            )
+            .set(players);
+    };
     const handleSelect = (
         e: React.MouseEvent<HTMLInputElement, MouseEvent>,
     ) => {
@@ -27,7 +34,7 @@ const PickTeam = (props: PickTeamProps) => {
     const handleSubmit = () => {
         submitTeam(selected);
     };
-    console.log(selected);
+
     if (gameState.players[gameState.order[gameState.currentTurn]].uid === uid) {
         return (
             <>

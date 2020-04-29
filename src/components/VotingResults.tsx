@@ -75,7 +75,11 @@ const MissionVote = (props: {
                         textAlign: 'center',
                     }}>
                     Quest {missionNum + 1}{' '}
-                    {questResults[missionNum] ?? '' ? '🏰' : '💀'}
+                    {questResults[missionNum] == null
+                        ? ''
+                        : questResults[missionNum]
+                        ? '🏰'
+                        : '💀'}
                 </Box>
 
                 {votes.map((v, j) => {

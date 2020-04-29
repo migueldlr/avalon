@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Box, Label, Checkbox, Text, Button } from 'theme-ui';
-import { GameStateType, Role, PlayerType } from '../types';
+import { Checkbox, Text, Button } from 'theme-ui';
+import { GameStateType, Role } from '../types';
 
-import { db, auth } from '../firebase/index';
+import { db } from '../firebase/index';
 import { getThisPlayer } from '../utils';
 
 interface AssassinPickProps {
@@ -31,10 +31,10 @@ const AssassinPick = (props: AssassinPickProps) => {
     };
 
     const submitAssassin = () => {
-        console.log(selectedPlayer);
         db.ref(`gameIn/${gameId}/assassinPick`)
             .set(selectedPlayer)
             .catch((err) => {
+                // eslint-disable-next-line no-console
                 console.log(err);
             });
     };

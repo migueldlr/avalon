@@ -27,6 +27,7 @@ const VoteQuest = (props: VoteQuestProps) => {
         db.ref(`gameIn/${gameId}/questVote/${uid}`)
             .set(v)
             .catch((err) => {
+                // eslint-disable-next-line no-console
                 console.log(err);
             });
     };
