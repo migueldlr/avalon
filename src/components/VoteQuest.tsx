@@ -42,7 +42,7 @@ const VoteQuest = (props: VoteQuestProps) => {
         ].some((u) => u === uid)
     ) {
         return (
-            <Box>
+            <>
                 <Text>
                     You are on a quest with{' '}
                     {listify(questers.filter((n) => n !== thisPlayer?.name))}
@@ -64,10 +64,10 @@ const VoteQuest = (props: VoteQuestProps) => {
                     disabled={voted}>
                     Failure...
                 </Button>
-            </Box>
+            </>
         );
     }
-    return <Box>{listify(questers)} are on the quest...</Box>;
+    return <>{listify(questers)} are on the quest...</>;
 };
 
 export default VoteQuest;

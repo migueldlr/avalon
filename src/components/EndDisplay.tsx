@@ -9,7 +9,7 @@ interface EndDisplayProps {
 const EndDisplay = (props: EndDisplayProps) => {
     const { gameState } = props;
     return (
-        <Box>
+        <>
             {gameState.assassinPick && (
                 <Text>{gameState.assassinPick} was assassinated</Text>
             )}
@@ -18,7 +18,7 @@ const EndDisplay = (props: EndDisplayProps) => {
             ) : (
                 <Text>Good wins!</Text>
             )}
-        </Box>
+        </>
     );
 };
 

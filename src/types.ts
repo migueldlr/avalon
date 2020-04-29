@@ -22,16 +22,21 @@ export interface GameStateType {
     currentQuest: number;
     currentTeamVote: number;
     questResults: boolean[];
-    questVote: boolean[];
+    questVote: boolean[] | string;
     quests: number[];
     players: Array<PlayerType>;
     proposed: string[][][];
+    teamVote: { [uid: string]: boolean }[][];
     finalResult: 'good' | 'bad';
     rejects: number;
     assassinPick: string;
 }
 
-export interface GameInType {
+interface GameInType {
     ready: { [uid: string]: boolean };
-    teamVote: { [uid: string]: boolean }[];
+    teamVote: { [uid: string]: boolean }[][];
+    questVote: { [uid: string]: boolean };
+    continue: { [uid: string]: number };
+    proposed: string[][][];
+    assassinPick: string;
 }

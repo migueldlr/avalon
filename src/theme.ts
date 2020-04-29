@@ -13,6 +13,8 @@ export default {
             7: '#8c8c8c',
             8: '#595959',
         },
+        yea: '#52c41a',
+        nay: '#ffccc7',
     },
     space: [0, 4, 8, 16, 32, 64, 128, 256],
     fonts: {

@@ -115,15 +115,27 @@ const updateGame = (
             return gameInRef.update({ questVote: [] }).then(() => {
                 return gameRef.update({
                     phase: 'voteQuest',
+                    [`teamVote/${gameState.currentQuest}/${gameState.currentTeamVote}`]: gameIn
+                        .teamVote[gameState.currentQuest][
+                        gameState.currentTeamVote
+                    ],
                 });
             });
         }
-        // five rejections in a row, so bad guys auto-win
+        // five rejections in a row, so bad guys auto-win a round
         if (gameState.rejects >= 4) {
-            return gameRef.update({
-                phase: 'end',
-                finalResult: 'bad',
-            });
+            return Promise.all([
+                gameRef.update({
+                    phase: 'decision',
+                    questVote: 'rejects',
+                    questResults: (gameState.questResults ?? []).concat(false),
+                    [`teamVote/${gameState.currentQuest}/${gameState.currentTeamVote}`]: gameIn
+                        .teamVote[gameState.currentQuest][
+                        gameState.currentTeamVote
+                    ],
+                }),
+                gameInRef.update({ ready: [] }),
+            ]);
         }
         return Promise.all([
             gameRef.update({
@@ -131,6 +143,10 @@ const updateGame = (
                 currentTurn: (gameState.currentTurn + 1) % gameState.numPlayers,
                 currentTeamVote: gameState.currentTeamVote + 1,
                 rejects: gameState.rejects + 1,
+                [`teamVote/${gameState.currentQuest}/${gameState.currentTeamVote}`]: gameIn
+                    .teamVote[gameState.currentQuest][
+                    gameState.currentTeamVote
+                ],
             }),
         ]);
     } else if (

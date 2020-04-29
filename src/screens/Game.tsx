@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Box, Text } from 'theme-ui';
+import { Flex, Text } from 'theme-ui';
 import { AppState } from '../store/index';
 
 import { dbGetGameRef } from '../firebase/game';
@@ -37,6 +37,7 @@ const Game = (props: GameProps) => {
         finalResult: 'good',
         rejects: -1,
         assassinPick: '',
+        teamVote: [],
     });
 
     useEffect(() => {
@@ -64,7 +65,7 @@ const Game = (props: GameProps) => {
     console.log(gameState);
 
     return (
-        <Box>
+        <Flex sx={{ flexDirection: 'column', alignItems: 'center' }}>
             {gameState.phase !== 'start' &&
                 gameState.phase !== 'assign' &&
                 gameState.phase !== 'decision' && (
@@ -94,7 +95,7 @@ const Game = (props: GameProps) => {
             )}
             {gameState.phase === 'end' && <EndDisplay gameState={gameState} />}
             <Text></Text>
-        </Box>
+        </Flex>
     );
 };
 

@@ -30,14 +30,19 @@ const PickTeam = (props: PickTeamProps) => {
     console.log(selected);
     if (gameState.players[gameState.order[gameState.currentTurn]].uid === uid) {
         return (
-            <Box>
+            <>
                 <Text>Who will go on this quest?</Text>
-                {gameState.players.map((p) => (
-                    <Label key={p.uid}>
-                        <Checkbox name={p.uid} onClick={handleSelect} />
-                        {p.name}
-                    </Label>
-                ))}
+                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                    {gameState.order.map((i) => {
+                        const p = gameState.players[i];
+                        return (
+                            <Label key={p.uid}>
+                                <Checkbox name={p.uid} onClick={handleSelect} />
+                                {p.name}
+                            </Label>
+                        );
+                    })}
+                </Box>
                 <Button
                     disabled={
                         selected.length !==
@@ -52,16 +57,16 @@ const PickTeam = (props: PickTeamProps) => {
                     onClick={handleSubmit}>
                     Onward!
                 </Button>
-            </Box>
+            </>
         );
     }
     return (
-        <Box>
+        <>
             <Text>
                 {gameState.players[gameState.order[gameState.currentTurn]].name}{' '}
                 is forming a questing team
             </Text>
-        </Box>
+        </>
     );
 };
 

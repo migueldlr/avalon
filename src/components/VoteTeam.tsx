@@ -40,7 +40,7 @@ const VoteTeam = (props: VoteTeamProps) => {
     };
 
     return (
-        <Box>
+        <>
             <Text>
                 {proposer} has proposed the following team: {listify(proposed)}
             </Text>
@@ -57,7 +57,7 @@ const VoteTeam = (props: VoteTeamProps) => {
                 disabled={voted}>
                 Nay!
             </Button>
-        </Box>
+        </>
     );
 };
 

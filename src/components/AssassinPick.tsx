@@ -40,11 +40,11 @@ const AssassinPick = (props: AssassinPickProps) => {
     };
 
     return (
-        <Box>
+        <>
             {thisPlayer?.role === 'assassin' && (
                 <>
                     {goodies.map((p) => (
-                        <Label key={p.name}>
+                        <Text key={p.name}>
                             <Checkbox
                                 name={p.uid}
                                 onClick={handleSelect}
@@ -52,7 +52,7 @@ const AssassinPick = (props: AssassinPickProps) => {
                                 checked={selectedPlayer === p.uid}
                             />
                             {p.name}
-                        </Label>
+                        </Text>
                     ))}
                     <Button
                         disabled={selectedPlayer == null}
@@ -67,7 +67,7 @@ const AssassinPick = (props: AssassinPickProps) => {
             {thisPlayer?.role !== 'assassin' && (
                 <Text>The assassin is deciding...</Text>
             )}
-        </Box>
+        </>
     );
 };
 
