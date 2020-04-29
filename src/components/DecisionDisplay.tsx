@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Text } from 'theme-ui';
+import { Text } from 'theme-ui';
 import { GameStateType } from '../types';
 
 import { db, auth } from '../firebase/index';
@@ -46,7 +46,7 @@ const DecisionDisplay = (props: DecisionDisplayProps) => {
                 }, 1000);
             });
         }
-    });
+    }, [gameState.questVote, displayN, res.length, gameId, uid]);
 
     return (
         <>

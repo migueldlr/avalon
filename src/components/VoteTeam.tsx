@@ -45,18 +45,24 @@ const VoteTeam = (props: VoteTeamProps) => {
                 {proposer} has proposed the following team: {listify(proposed)}
             </Text>
             <Text>What say you?</Text>
-            <Button
-                onClick={() => handleVote(true)}
-                variant={!voted ? 'primary' : vote ? 'selected' : 'disabled'}
-                disabled={voted}>
-                Yea!
-            </Button>
-            <Button
-                onClick={() => handleVote(false)}
-                variant={!voted ? 'primary' : !vote ? 'selected' : 'disabled'}
-                disabled={voted}>
-                Nay!
-            </Button>
+            <Box>
+                <Button
+                    onClick={() => handleVote(true)}
+                    variant={
+                        !voted ? 'primary' : vote ? 'selected' : 'disabled'
+                    }
+                    disabled={voted}>
+                    Yea!
+                </Button>
+                <Button
+                    onClick={() => handleVote(false)}
+                    variant={
+                        !voted ? 'primary' : !vote ? 'selected' : 'disabled'
+                    }
+                    disabled={voted}>
+                    Nay!
+                </Button>
+            </Box>
         </>
     );
 };

@@ -3,6 +3,7 @@ import { Box, Label, Checkbox, Text, Button } from 'theme-ui';
 import { GameStateType, Role, PlayerType } from '../types';
 
 import { db, auth } from '../firebase/index';
+import { getThisPlayer } from '../utils';
 
 interface AssassinPickProps {
     gameState: GameStateType;
@@ -16,8 +17,7 @@ const isBad = (role: Role) => {
 const AssassinPick = (props: AssassinPickProps) => {
     const { gameState, gameId } = props;
     const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null); // uid
-    const uid = auth.currentUser?.uid;
-    const thisPlayer = gameState.players.find((p) => p.uid === uid);
+    const thisPlayer = getThisPlayer(gameState);
 
     const goodies = gameState.players.filter(
         (p) => !isBad(p.role) && p.uid !== thisPlayer?.uid,

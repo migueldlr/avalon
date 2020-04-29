@@ -48,22 +48,24 @@ const VoteQuest = (props: VoteQuestProps) => {
                     {listify(questers.filter((n) => n !== thisPlayer?.name))}
                 </Text>
                 <Text>Do you advance the quest?</Text>
-                <Button
-                    onClick={() => handleVote(true)}
-                    variant={
-                        !voted ? 'primary' : vote ? 'selected' : 'disabled'
-                    }
-                    disabled={voted}>
-                    Success!
-                </Button>
-                <Button
-                    onClick={() => handleVote(false)}
-                    variant={
-                        !voted ? 'primary' : !vote ? 'selected' : 'disabled'
-                    }
-                    disabled={voted}>
-                    Failure...
-                </Button>
+                <Box>
+                    <Button
+                        onClick={() => handleVote(true)}
+                        variant={
+                            !voted ? 'primary' : vote ? 'selected' : 'disabled'
+                        }
+                        disabled={voted}>
+                        Success!
+                    </Button>
+                    <Button
+                        onClick={() => handleVote(false)}
+                        variant={
+                            !voted ? 'primary' : !vote ? 'selected' : 'disabled'
+                        }
+                        disabled={voted}>
+                        Failure...
+                    </Button>
+                </Box>
             </>
         );
     }
