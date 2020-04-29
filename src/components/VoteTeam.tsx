@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { db, auth } from '../firebase/index';
-import { Box, Text, Button, Checkbox, Label } from 'theme-ui';
+import { Box, Text, Button } from 'theme-ui';
 import { GameStateType } from '../types';
+import { listify } from '../utils';
 
 interface VoteTeamProps {
     gameState: GameStateType;
@@ -15,9 +16,9 @@ const VoteTeam = (props: VoteTeamProps) => {
         gameState.players[gameState.order[gameState.currentTurn]].name;
     const proposedUids: string[] =
         gameState.proposed[gameState.currentQuest][gameState.currentTeamVote];
-    const proposed = proposedUids.map(
-        (u) => gameState.players.find((p) => p.uid === u)?.name,
-    );
+    const proposed = proposedUids
+        .map((u) => gameState.players.find((p) => p.uid === u)?.name ?? '')
+        .filter((x) => x !== '');
 
     const [voted, setVoted] = useState<boolean>(false);
     const [vote, setVote] = useState<boolean | null>(null);
@@ -41,8 +42,7 @@ const VoteTeam = (props: VoteTeamProps) => {
     return (
         <Box>
             <Text>
-                {proposer} has proposed the following team:{' '}
-                {JSON.stringify(proposed)}
+                {proposer} has proposed the following team: {listify(proposed)}
             </Text>
             <Text>What say you?</Text>
             <Button

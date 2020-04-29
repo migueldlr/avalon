@@ -191,11 +191,13 @@ const updateGame = (
         ) {
             return gameRef.update({
                 phase: 'end',
+                assassinPick: gameIn.assassinPick,
                 finalResult: 'bad',
             });
         }
         return gameRef.update({
             phase: 'end',
+            assassinPick: gameIn.assassinPick,
             finalResult: 'good',
         });
     }

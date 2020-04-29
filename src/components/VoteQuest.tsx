@@ -3,6 +3,7 @@ import { Box, Text, Button } from 'theme-ui';
 import { GameStateType } from '../types';
 
 import { db, auth } from '../firebase/index';
+import { listify } from '../utils';
 
 interface VoteQuestProps {
     gameState: GameStateType;
@@ -14,9 +15,9 @@ const VoteQuest = (props: VoteQuestProps) => {
     const uid = auth.currentUser?.uid;
     const questerUids: string[] =
         gameState.proposed[gameState.currentQuest][gameState.currentTeamVote];
-    const questers = questerUids.map(
-        (u) => gameState.players.find((p) => p.uid === u)?.name,
-    );
+    const questers = questerUids
+        .map((u) => gameState.players.find((p) => p.uid === u)?.name ?? '')
+        .filter((x) => x !== '');
     const thisPlayer = gameState.players.find((p) => p.uid === uid);
 
     const [voted, setVoted] = useState<boolean>(false);
@@ -44,7 +45,7 @@ const VoteQuest = (props: VoteQuestProps) => {
             <Box>
                 <Text>
                     You are on a quest with{' '}
-                    {questers.filter((n) => n !== thisPlayer?.name)}
+                    {listify(questers.filter((n) => n !== thisPlayer?.name))}
                 </Text>
                 <Text>Do you advance the quest?</Text>
                 <Button
@@ -66,7 +67,7 @@ const VoteQuest = (props: VoteQuestProps) => {
             </Box>
         );
     }
-    return <Box>{JSON.stringify(questers)} are on the quest...</Box>;
+    return <Box>{listify(questers)} are on the quest...</Box>;
 };
 
 export default VoteQuest;

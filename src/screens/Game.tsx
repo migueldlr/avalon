@@ -13,6 +13,7 @@ import VoteQuest from '../components/VoteQuest';
 import DecisionDisplay from '../components/DecisionDisplay';
 import AssassinPick from '../components/AssassinPick';
 import GameStateDisplay from '../components/GameStateDisplay';
+import EndDisplay from '../components/EndDisplay';
 
 interface GameProps {
     gameId: string;
@@ -35,6 +36,7 @@ const Game = (props: GameProps) => {
         questVote: [],
         finalResult: 'good',
         rejects: -1,
+        assassinPick: '',
     });
 
     useEffect(() => {
@@ -63,7 +65,6 @@ const Game = (props: GameProps) => {
 
     return (
         <Box>
-            <Text>Game</Text>
             {gameState.phase !== 'start' &&
                 gameState.phase !== 'assign' &&
                 gameState.phase !== 'decision' && (
@@ -91,12 +92,7 @@ const Game = (props: GameProps) => {
             {gameState.phase === 'assassin' && (
                 <AssassinPick gameState={gameState} gameId={gameId} />
             )}
-            {gameState.phase === 'end' &&
-                (gameState.finalResult === 'bad' ? (
-                    <Text>Evil wins!</Text>
-                ) : (
-                    <Text>Good wins!</Text>
-                ))}
+            {gameState.phase === 'end' && <EndDisplay gameState={gameState} />}
             <Text></Text>
         </Box>
     );

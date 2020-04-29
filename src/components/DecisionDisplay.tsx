@@ -3,7 +3,6 @@ import { Box, Text } from 'theme-ui';
 import { GameStateType } from '../types';
 
 import { db, auth } from '../firebase/index';
-import { dbLeaveRoom } from '../firebase/rooms';
 
 interface DecisionDisplayProps {
     gameState: GameStateType;
@@ -31,7 +30,7 @@ const DecisionDisplay = (props: DecisionDisplayProps) => {
                 setDisplayRes(true);
                 setTimeout(() => {
                     db.ref(`gameIn/${gameId}/ready/${uid}/`).set(true);
-                }, 1000);
+                }, 500);
             }, 1000);
     });
 

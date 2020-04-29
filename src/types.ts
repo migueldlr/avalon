@@ -28,6 +28,7 @@ export interface GameStateType {
     proposed: string[][][];
     finalResult: 'good' | 'bad';
     rejects: number;
+    assassinPick: string;
 }
 
 export interface GameInType {
