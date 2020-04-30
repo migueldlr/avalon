@@ -133,6 +133,10 @@ const MissionVote = (props: {
                                                     leader % numPlayers === l
                                                         ? 'black solid 2px'
                                                         : 'transparent solid 2px',
+                                                borderColor:
+                                                    leader % numPlayers === l
+                                                        ? 'text'
+                                                        : '',
                                                 fontSize: [0, 1],
                                             }}>
                                             {questers[j].includes(u)

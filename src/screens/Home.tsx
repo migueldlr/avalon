@@ -1,10 +1,22 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { Box, Button, Input, Text, Heading, Link, Image } from 'theme-ui';
+import {
+    Box,
+    Button,
+    Input,
+    Text,
+    Heading,
+    Link,
+    Image,
+    useColorMode,
+} from 'theme-ui';
 import { dbCreateRoom, dbJoinRoom, RoomResponse } from '../firebase/rooms';
 import { joinRoom } from '../store/room/actions';
+import { ReactComponent as SunIcon } from '../img/brightness.svg';
 
 import githubIcon from '../img/github.png';
+import githubIconLight from '../img/githublight.png';
+import theme from '../theme';
 
 interface HomeProps {
     joinRoom: typeof joinRoom;
@@ -14,6 +26,7 @@ const Home = (props: HomeProps) => {
     const [roomIdInput, setRoomIdInput] = useState('');
     const [nameInput, setNameInput] = useState('');
     const [message, setMessage] = useState('');
+    const [colorMode, setColorMode] = useColorMode();
 
     const handleCreate = async () => {
         const roomId = await dbCreateRoom(nameInput);
@@ -87,13 +100,29 @@ const Home = (props: HomeProps) => {
                 <Text variant="disclaimer">
                     Made by Miguel de los Reyes and Seth Hollandsworth.
                 </Text>
-                <Link href="https://github.com/migueldlr/avalon">
-                    <Image
-                        src={githubIcon}
-                        alt="Link to GitHub page"
-                        sx={{ width: '20px', height: '20px', mt: 2 }}
+                <Box sx={{ mt: 2 }}>
+                    <Link href="https://github.com/migueldlr/avalon">
+                        <Image
+                            src={
+                                colorMode === 'default'
+                                    ? githubIcon
+                                    : githubIconLight
+                            }
+                            alt="Link to GitHub page"
+                            sx={{ width: '20px', height: '20px', mr: 2 }}
+                        />
+                    </Link>
+                    <SunIcon
+                        fill={colorMode === 'default' ? 'black' : 'white'}
+                        onClick={(e) => {
+                            setColorMode(
+                                colorMode === 'default' ? 'dark' : 'default',
+                            );
+                        }}
+                        width="20px"
+                        height="20px"
                     />
-                </Link>
+                </Box>
             </Box>
         </>
     );

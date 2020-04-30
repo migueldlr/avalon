@@ -3,6 +3,19 @@ export default {
     fontSizes: [12, 14, 16, 20, 24, 32, 48, 64],
     sizes: [1, 2, 4, 16, 24, 40, 64, 104],
     colors: {
+        modes: {
+            dark: {
+                text: '#c5c8c6',
+                background: '#1e1e1e',
+                heading: '#f8df8b',
+                primary: '#f8df8b',
+                yea: '#70DF55',
+                nay: '#ad3737',
+                // hover
+                // selected
+                // button:
+            },
+        },
         blue: '#07c',
         lightgray: '#f6f6ff',
         background: 'white',
@@ -40,6 +53,7 @@ export default {
         },
         heading: {
             fontSize: [5, 6, 7],
+            color: 'heading',
         },
     },
     styles: {
