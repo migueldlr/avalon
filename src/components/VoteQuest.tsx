@@ -12,7 +12,8 @@ interface VoteQuestProps {
 const VoteQuest = (props: VoteQuestProps) => {
     const { gameState, gameId } = props;
     const uid = auth.currentUser?.uid;
-    const questerUids: string[] = gameState.proposed;
+    const questerUids: string[] =
+        gameState.proposed[gameState.currentQuest][gameState.currentTeamVote];
     const questers = questerUids.map(
         (u) => gameState.players.find((p) => p.uid === u)?.name,
     );

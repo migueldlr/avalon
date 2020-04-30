@@ -1,7 +1,6 @@
 import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
 import { shuffle } from './util';
-
-import admin = require('firebase-admin');
 
 admin.initializeApp();
 const db = admin.database();
@@ -43,78 +42,155 @@ interface PlayerType {
 }
 
 interface GameStateType {
-    phase: 'assign' | 'turn' | 'voteTeam' | 'voteQuest';
+    phase:
+        | 'assign'
+        | 'turn'
+        | 'voteTeam'
+        | 'voteQuest'
+        | 'decision'
+        | 'end'
+        | 'assassin';
     numPlayers: number;
     order: number[];
     currentTurn: number;
     currentQuest: number;
+    currentTeamVote: number;
     questResults: boolean[];
     questVote: boolean[];
     quests: number[];
     players: Array<PlayerType>;
+    finalResult: 'good' | 'bad';
 }
 
 interface GameInType {
     ready: { [uid: string]: boolean };
-    teamVote: { [uid: string]: boolean };
+    teamVote: { [uid: string]: boolean }[][];
     questVote: { [uid: string]: boolean };
-    proposed: string[];
+    continue: { [uid: string]: number };
+    proposed: string[][][];
+    assassinPick: string;
 }
 
 const updateGame = (
     gameState: GameStateType,
     gameIn: GameInType,
-    gameRef: admin.database.Reference,
+    dbRef: admin.database.Reference,
+    gameId: string,
 ): Promise<any> | null => {
+    console.log('hot reloading!');
+    const gameRef = dbRef.child(`games/${gameId}`);
+    const gameInRef = dbRef.child(`gameIn/${gameId}`);
+
     if (gameState.phase === 'assign') {
-        console.log(
-            `${Object.values(gameIn.ready).length} ${gameState.numPlayers}`,
-        );
         if (Object.values(gameIn.ready).length === gameState.numPlayers) {
+            console.log(0);
             return gameRef.update({
                 phase: 'turn',
                 currentTurn: 0,
             });
         }
-    } else if (gameState.phase === 'turn' && gameIn.proposed) {
+    } else if (
+        gameState.phase === 'turn' &&
+        gameIn.proposed[gameState.currentQuest][gameState.currentTeamVote]
+    ) {
+        console.log(1);
         return gameRef.update({
             phase: 'voteTeam',
-            proposed: gameIn.proposed,
+            [`proposed/${gameState.currentQuest}/${gameState.currentTeamVote}`]: gameIn
+                .proposed[gameState.currentQuest][gameState.currentTeamVote],
         });
     } else if (
         gameState.phase === 'voteTeam' &&
-        Object.values(gameIn.teamVote).length === gameState.numPlayers
+        Object.values(
+            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote],
+        ).length === gameState.numPlayers
     ) {
-        const yeas = Object.values(gameIn.teamVote).filter((v) => v).length;
+        console.log(2);
+
+        const yeas = Object.values(
+            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote],
+        ).filter((v) => v).length;
         if (yeas > 0.5 * gameState.numPlayers) {
-            return gameRef.update({
-                phase: 'voteQuest',
-            });
+            return Promise.all([
+                gameRef.update({
+                    phase: 'voteQuest',
+                }),
+                gameInRef.update({ questVote: [] }),
+            ]);
         }
-        return gameRef.update({
-            phase: 'turn',
-            currentTurn: (gameState.currentTurn + 1) % gameState.numPlayers,
-        });
+        return Promise.all([
+            gameRef.update({
+                phase: 'turn',
+                currentTurn: (gameState.currentTurn + 1) % gameState.numPlayers,
+                currentTeamVote: gameState.currentTeamVote + 1,
+            }),
+        ]);
     } else if (
         gameState.phase === 'voteQuest' &&
         Object.values(gameIn.questVote).length ===
             gameState.quests[gameState.currentQuest]
     ) {
+        console.log(3);
+
         const reqFails =
             gameState.numPlayers >= 7 && gameState.currentQuest === 3 ? 2 : 1;
         const fails = Object.values(gameIn.questVote).filter((v) => !v).length;
         const oldQuestResults = gameState.questResults ?? [];
-        if (fails >= reqFails) {
+        const gameUpdate = {
+            phase: 'decision',
+            questResults: oldQuestResults.concat(fails < reqFails),
+            questVote: Object.values(gameIn.questVote),
+        };
+
+        return Promise.all([
+            gameRef.update(gameUpdate),
+            gameInRef.update({ ready: [] }),
+        ]);
+    } else if (
+        gameState.phase === 'decision' &&
+        Object.values(gameIn.ready).length === gameState.numPlayers
+    ) {
+        console.log(4);
+
+        console.log('happens');
+        // all quests are done
+        // bad guys auto-win
+        if (gameState.questResults.filter((x) => !x).length >= 3) {
             return gameRef.update({
-                phase: 'decision',
-                questResults: oldQuestResults.concat(false),
-                questVote: Object.values(gameIn.questVote),
+                phase: 'end',
+                finalResult: 'bad',
+            });
+        }
+        // assassin phase
+        if (gameState.questResults.filter((x) => x).length >= 3) {
+            return gameRef.update({
+                phase: 'assassin',
+            });
+        }
+        if (gameState.currentQuest <= 3) {
+            return Promise.all([
+                gameRef.update({
+                    phase: 'turn',
+                    currentTurn:
+                        (gameState.currentTurn + 1) % gameState.numPlayers,
+                    currentQuest: gameState.currentQuest + 1,
+                    currentTeamVote: 0,
+                }),
+            ]);
+        }
+    } else if (gameState.phase === 'assassin' && gameIn.assassinPick) {
+        if (
+            gameIn.assassinPick ===
+            gameState.players.find((p) => p.role === 'merlin')?.name
+        ) {
+            return gameRef.update({
+                phase: 'end',
+                finalResult: 'bad',
             });
         }
         return gameRef.update({
-            phase: 'decision',
-            questResults: oldQuestResults.concat(true),
-            questVote: Object.values(gameIn.questVote),
+            phase: 'end',
+            finalResult: 'good',
         });
     }
     return null;
@@ -128,7 +204,7 @@ export const updateGameListener = functions.database
         const gameRef = db.ref(`games/${gameId}`);
         return gameRef.once('value', (gameSnap) => {
             const gameState = gameSnap.val();
-            return updateGame(gameState, gameIn, gameRef);
+            return updateGame(gameState, gameIn, db.ref(), gameId);
         });
     });
 
@@ -160,6 +236,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
             order: shuffle([...Array(numPlayers).keys()]),
             quests: getQuests(numPlayers),
             currentQuest: 0,
+            currentTeamVote: 0,
             questResults: [],
         })
         .catch((err) => {
