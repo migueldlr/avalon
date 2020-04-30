@@ -66,6 +66,7 @@ const Lobby = (props: LobbyProps) => {
 
     const handleLeaveRoom = async () => {
         if (roomId == null) {
+            // eslint-disable-next-line no-console
             console.error("Room ID not found");
             return;
         }

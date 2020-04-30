@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Text, Button } from 'theme-ui';
 import { GameStateType, Role } from '../types';
+import { listify } from '../utils';
+import { db, auth } from '../firebase';
 
 interface AssignRoleProps {
     gameState: GameStateType;
-    onClick: () => void;
-    uid: string;
+    gameId: string;
 }
 
-const roleText: Record<Role, JSX.Element> = {
-    good: <Text>a loyal servant of Arthur</Text>,
-    merlin: <Text>the wise wizard Merlin</Text>,
-    bad: <Text>an evil minion of Mordred</Text>,
-    assassin: <Text>the evil Assassin</Text>,
+const roleText: Record<Role, string> = {
+    good: 'a loyal servant of Arthur 🏰',
+    merlin: 'the wise wizard Merlin 🏰',
+    bad: 'an evil minion of Mordred 💀',
+    assassin: 'the evil Assassin 💀',
 };
 
 const isBad = (role: Role) => {
@@ -20,16 +21,22 @@ const isBad = (role: Role) => {
 };
 
 const AssignRole = (props: AssignRoleProps) => {
-    const { gameState, onClick, uid } = props;
+    const { gameState, gameId } = props;
     const [canClick, setCanClick] = useState(false);
+
+    const uid = auth.currentUser?.uid;
     useEffect(() => {
         setTimeout(() => {
             setCanClick(true);
         }, 2000);
     }, []);
 
+    const setReady = async () => {
+        await db.ref(`gameIn/${gameId}/ready/${uid}`).set(true);
+    };
+
     const handleClick = () => {
-        onClick();
+        setReady();
         setCanClick(false);
     };
 
@@ -43,20 +50,16 @@ const AssignRole = (props: AssignRoleProps) => {
         <Box>
             {thisPlayer && (
                 <>
-                    <Text>{JSON.stringify(thisPlayer)}</Text>
                     <Text>
                         {thisPlayer.name}, you are {roleText[thisPlayer.role]}
                     </Text>
                     {isBad(thisPlayer.role) && (
                         <Text>
-                            The other minions of Mordred are{' '}
-                            {JSON.stringify(baddies)}
+                            The other minions of Mordred: {listify(baddies)}
                         </Text>
                     )}
                     {thisPlayer.role === 'merlin' && (
-                        <Text>
-                            The minions of Mordred are {JSON.stringify(baddies)}
-                        </Text>
+                        <Text>The minions of Mordred: {listify(baddies)}</Text>
                     )}
                 </>
             )}

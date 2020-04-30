@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Label, Checkbox, Text, Button } from 'theme-ui';
-import { GameStateType, Role, PlayerType } from '../types';
+import { Checkbox, Text, Button, Label, Box } from 'theme-ui';
+import { GameStateType, Role } from '../types';
 
-import { db, auth } from '../firebase/index';
+import { db } from '../firebase/index';
+import { getThisPlayer } from '../utils';
 
 interface AssassinPickProps {
     gameState: GameStateType;
@@ -16,8 +17,7 @@ const isBad = (role: Role) => {
 const AssassinPick = (props: AssassinPickProps) => {
     const { gameState, gameId } = props;
     const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null); // uid
-    const uid = auth.currentUser?.uid;
-    const thisPlayer = gameState.players.find((p) => p.uid === uid);
+    const thisPlayer = getThisPlayer(gameState);
 
     const goodies = gameState.players.filter(
         (p) => !isBad(p.role) && p.uid !== thisPlayer?.uid,
@@ -31,29 +31,32 @@ const AssassinPick = (props: AssassinPickProps) => {
     };
 
     const submitAssassin = () => {
-        console.log(selectedPlayer);
         db.ref(`gameIn/${gameId}/assassinPick`)
             .set(selectedPlayer)
             .catch((err) => {
+                // eslint-disable-next-line no-console
                 console.log(err);
             });
     };
 
     return (
-        <Box>
+        <>
             {thisPlayer?.role === 'assassin' && (
                 <>
-                    {goodies.map((p) => (
-                        <Label key={p.name}>
-                            <Checkbox
-                                name={p.uid}
-                                onClick={handleSelect}
-                                onChange={() => {}}
-                                checked={selectedPlayer === p.uid}
-                            />
-                            {p.name}
-                        </Label>
-                    ))}
+                    <Text>Who is Merlin?</Text>
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        {goodies.map((p) => (
+                            <Label key={p.name}>
+                                <Checkbox
+                                    name={p.uid}
+                                    onClick={handleSelect}
+                                    onChange={() => {}}
+                                    checked={selectedPlayer === p.uid}
+                                />
+                                {p.name}
+                            </Label>
+                        ))}
+                    </Box>
                     <Button
                         disabled={selectedPlayer == null}
                         variant={
@@ -67,7 +70,7 @@ const AssassinPick = (props: AssassinPickProps) => {
             {thisPlayer?.role !== 'assassin' && (
                 <Text>The assassin is deciding...</Text>
             )}
-        </Box>
+        </>
     );
 };
 

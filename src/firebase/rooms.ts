@@ -22,6 +22,7 @@ export const dbCreateRoom = async (name: string) => {
             });
         return roomId;
     } catch (err) {
+        // eslint-disable-next-line no-console
         console.log(err);
         return null;
     }
@@ -51,6 +52,7 @@ export const dbJoinRoom = async (
 
         return RoomResponse.OK;
     } catch (err) {
+        // eslint-disable-next-line no-console
         console.log(err);
         return RoomResponse.OTHER;
     }

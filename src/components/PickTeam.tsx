@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
 import { Box, Text, Button, Checkbox, Label } from 'theme-ui';
 import { GameStateType } from '../types';
+import { db, auth } from '../firebase/index';
 
 interface PickTeamProps {
     gameState: GameStateType;
-    submitTeam: (x: string[]) => void;
+    gameId: string;
 }
 
 const PickTeam = (props: PickTeamProps) => {
-    const { gameState, submitTeam } = props;
+    const { gameState, gameId } = props;
+    const uid = auth.currentUser?.uid;
     const [selected, setSelected] = useState<string[]>([]);
+    const submitTeam = async (players: string[]) => {
+        await db
+            .ref(
+                `gameIn/${gameId}/proposed/${gameState.currentQuest}/${gameState.currentTeamVote}`,
+            )
+            .set(players);
+    };
     const handleSelect = (
         e: React.MouseEvent<HTMLInputElement, MouseEvent>,
     ) => {
@@ -25,29 +34,44 @@ const PickTeam = (props: PickTeamProps) => {
     const handleSubmit = () => {
         submitTeam(selected);
     };
-    console.log(selected);
+
+    if (gameState.players[gameState.order[gameState.currentTurn]].uid === uid) {
+        return (
+            <>
+                <Text>Who will go on this quest?</Text>
+                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                    {gameState.order.map((i) => {
+                        const p = gameState.players[i];
+                        return (
+                            <Label key={p.uid}>
+                                <Checkbox name={p.uid} onClick={handleSelect} />
+                                {p.name}
+                            </Label>
+                        );
+                    })}
+                </Box>
+                <Button
+                    disabled={
+                        selected.length !==
+                        gameState.quests[gameState.currentQuest]
+                    }
+                    variant={
+                        selected.length !==
+                        gameState.quests[gameState.currentQuest]
+                            ? 'disabled'
+                            : 'primary'
+                    }
+                    onClick={handleSubmit}>
+                    Onward!
+                </Button>
+            </>
+        );
+    }
     return (
-        <Box>
-            <Text>Who will go on this quest?</Text>
-            {gameState.players.map((p) => (
-                <Label key={p.uid}>
-                    <Checkbox name={p.uid} onClick={handleSelect} />
-                    {p.name}
-                </Label>
-            ))}
-            <Button
-                disabled={
-                    selected.length !== gameState.quests[gameState.currentQuest]
-                }
-                variant={
-                    selected.length !== gameState.quests[gameState.currentQuest]
-                        ? 'disabled'
-                        : 'primary'
-                }
-                onClick={handleSubmit}>
-                Onward!
-            </Button>
-        </Box>
+        <Text>
+            {gameState.players[gameState.order[gameState.currentTurn]].name} is
+            forming a questing team
+        </Text>
     );
 };
 

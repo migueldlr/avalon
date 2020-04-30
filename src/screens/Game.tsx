@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Box, Text } from 'theme-ui';
+import { Flex } from 'theme-ui';
 import { AppState } from '../store/index';
 
 import { dbGetGameRef } from '../firebase/game';
-import { db, auth } from '../firebase/index';
 import { GameStateType } from '../types';
 import AssignRole from '../components/AssignRole';
 import PickTeam from '../components/PickTeam';
@@ -12,6 +11,8 @@ import VoteTeam from '../components/VoteTeam';
 import VoteQuest from '../components/VoteQuest';
 import DecisionDisplay from '../components/DecisionDisplay';
 import AssassinPick from '../components/AssassinPick';
+import GameStateDisplay from '../components/GameStateDisplay';
+import EndDisplay from '../components/EndDisplay';
 
 interface GameProps {
     gameId: string;
@@ -19,7 +20,6 @@ interface GameProps {
 
 const Game = (props: GameProps) => {
     const { gameId } = props;
-    const uid = auth.currentUser?.uid;
     const [gameState, setGameState] = useState<GameStateType>({
         phase: 'start',
         numPlayers: 0,
@@ -33,6 +33,9 @@ const Game = (props: GameProps) => {
         questResults: [],
         questVote: [],
         finalResult: 'good',
+        rejects: -1,
+        assassinPick: '',
+        teamVote: [],
     });
 
     useEffect(() => {
@@ -45,62 +48,33 @@ const Game = (props: GameProps) => {
         });
     }, [gameId]);
 
-    const setReady = async () => {
-        await db.ref(`gameIn/${gameId}/ready/${uid}`).set(true);
-    };
-
-    const setProposedTeam = async (players: string[]) => {
-        await db
-            .ref(
-                `gameIn/${gameId}/proposed/${gameState.currentQuest}/${gameState.currentTeamVote}`,
-            )
-            .set(players);
-    };
-
-    console.log(gameState);
-
     return (
-        <Box>
-            <Text>Game</Text>
-            {/* <Text>{gameId ?? ''}</Text>
-            <Text>{JSON.stringify(gameState)}</Text> */}
-            {gameState.phase === 'assign' && (
-                <AssignRole
-                    uid={uid ?? ''}
-                    gameState={gameState}
-                    onClick={setReady}
-                />
-            )}
-            {gameState.phase === 'turn' &&
-                gameState.players[gameState.currentTurn].uid === uid && (
-                    <PickTeam
-                        gameState={gameState}
-                        submitTeam={setProposedTeam}
-                    />
+        <Flex sx={{ flexDirection: 'column', alignItems: 'center', p: 1 }}>
+            {gameState.phase !== 'start' &&
+                gameState.phase !== 'assign' &&
+                gameState.phase !== 'decision' && (
+                    <GameStateDisplay gameState={gameState} />
                 )}
+            {gameState.phase === 'assign' && (
+                <AssignRole gameState={gameState} gameId={gameId} />
+            )}
+            {gameState.phase === 'turn' && (
+                <PickTeam gameState={gameState} gameId={gameId} />
+            )}
             {gameState.phase === 'voteTeam' && (
                 <VoteTeam gameState={gameState} gameId={gameId} />
             )}
-            {gameState.phase === 'voteQuest' &&
-                gameState.proposed[gameState.currentQuest][
-                    gameState.currentTeamVote
-                ].some((u) => u === uid) && (
-                    <VoteQuest gameState={gameState} gameId={gameId} />
-                )}
+            {gameState.phase === 'voteQuest' && (
+                <VoteQuest gameState={gameState} gameId={gameId} />
+            )}
             {gameState.phase === 'decision' && (
                 <DecisionDisplay gameState={gameState} gameId={gameId} />
             )}
             {gameState.phase === 'assassin' && (
                 <AssassinPick gameState={gameState} gameId={gameId} />
             )}
-            {gameState.phase === 'end' &&
-                (gameState.finalResult === 'bad' ? (
-                    <Text>Evil wins!</Text>
-                ) : (
-                    <Text>Good wins!</Text>
-                ))}
-            <Text></Text>
-        </Box>
+            {gameState.phase === 'end' && <EndDisplay gameState={gameState} />}
+        </Flex>
     );
 };
 

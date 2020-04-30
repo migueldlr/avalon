@@ -27,6 +27,7 @@ const App: React.FC<AppProps> = ({ roomId, inGame, joinGame }) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 // ...
+                // eslint-disable-next-line no-console
                 console.log(`${errorCode} ${errorMessage}`);
             })
             .finally(() => {

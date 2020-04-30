@@ -5,12 +5,9 @@ export const establishPresence = () => {
     // Fetch the current user's ID from Firebase Authentication.
     const uid = auth.currentUser?.uid;
 
-    console.log(uid);
     // Create a reference to this user's specific status node.
     // This is where we will store data about being online/offline.
     const userStatusDatabaseRef = db.ref(`/status/${uid}`);
-
-    console.log('all good here');
 
     // We'll create two constants which we will write to
     // the Realtime database when this device is offline
@@ -54,6 +51,7 @@ export const establishPresence = () => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 // ...
+                // eslint-disable-next-line no-console
                 console.log(`${errorCode} ${errorMessage}`);
             });
     });

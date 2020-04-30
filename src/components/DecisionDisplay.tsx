@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Text } from 'theme-ui';
+import { Text } from 'theme-ui';
 import { GameStateType } from '../types';
 
 import { db, auth } from '../firebase/index';
-import { dbLeaveRoom } from '../firebase/rooms';
 
 interface DecisionDisplayProps {
     gameState: GameStateType;
@@ -14,31 +13,52 @@ const DecisionDisplay = (props: DecisionDisplayProps) => {
     const { gameState, gameId } = props;
     const uid = auth.currentUser?.uid;
 
-    const res = gameState.questVote;
-    res.sort();
-    res.reverse();
-    const displayDecision = res.map((r) => (r ? '🛡️' : '💀'));
+    let res = [];
+    let displayDecision: string[] = [];
+
+    if (Array.isArray(gameState.questVote)) {
+        res = gameState.questVote;
+        res.sort();
+        res.reverse();
+        displayDecision = res.map((r) => (r ? '🏰' : '💀'));
+    }
 
     const [displayN, setDisplayN] = useState<number>(0);
     const [displayRes, setDisplayRes] = useState<boolean>(false);
     useEffect(() => {
-        if (displayN < res.length)
+        if (Array.isArray(gameState.questVote)) {
+            if (displayN < res.length)
+                setTimeout(() => {
+                    setDisplayN(displayN + 1);
+                }, 2000);
+            else if (displayN === res.length)
+                setTimeout(() => {
+                    setDisplayRes(true);
+                    setTimeout(() => {
+                        db.ref(`gameIn/${gameId}/ready/${uid}/`).set(true);
+                    }, 500);
+                }, 1000);
+        } else {
+            setDisplayRes(true);
             setTimeout(() => {
-                setDisplayN(displayN + 1);
-            }, 2000);
-        else if (displayN === res.length)
-            setTimeout(() => {
-                setDisplayRes(true);
                 setTimeout(() => {
                     db.ref(`gameIn/${gameId}/ready/${uid}/`).set(true);
                 }, 1000);
-            }, 1000);
-    });
+            });
+        }
+    }, [gameState.questVote, displayN, res.length, gameId, uid]);
 
     return (
-        <Box>
-            <Text>The mission results have arrived...</Text>
-            <Text>{displayDecision.slice(0, displayN)}</Text>
+        <>
+            {Array.isArray(gameState.questVote) && (
+                <>
+                    <Text>The mission results have arrived...</Text>
+                    <Text>{displayDecision.slice(0, displayN)}</Text>
+                </>
+            )}
+            {!Array.isArray(gameState.questVote) && (
+                <Text>Five rejections in a row</Text>
+            )}
             {displayRes && (
                 <Text>
                     {gameState.questResults[gameState.currentQuest]
@@ -46,7 +66,7 @@ const DecisionDisplay = (props: DecisionDisplayProps) => {
                         : 'The mission failed'}
                 </Text>
             )}
-        </Box>
+        </>
     );
 };
 
