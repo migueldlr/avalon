@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'theme-ui';
+import { Text, Flex, Grid } from 'theme-ui';
 import { GameStateType } from '../types';
 
 interface EndDisplayProps {
@@ -11,13 +11,32 @@ const EndDisplay = (props: EndDisplayProps) => {
     return (
         <>
             {gameState.assassinPick && (
-                <Text>{gameState.assassinPick} was assassinated</Text>
+                <Text>
+                    The assassin killed{' '}
+                    {
+                        gameState.players.find(
+                            (p) => p.uid === gameState.assassinPick,
+                        )?.name
+                    }
+                </Text>
             )}
             {gameState.finalResult === 'bad' ? (
                 <Text>Evil wins!</Text>
             ) : (
                 <Text>Good wins!</Text>
             )}
+            <Grid columns={2}>
+                <Flex sx={{ flexDirection: 'column' }}>
+                    {gameState.order.map((i, idx) => {
+                        return <Flex key={i}>{gameState.players[i].name}</Flex>;
+                    })}
+                </Flex>
+                <Flex sx={{ flexDirection: 'column' }}>
+                    {gameState.order.map((i, idx) => {
+                        return <Flex key={i}>{gameState.players[i].role}</Flex>;
+                    })}
+                </Flex>
+            </Grid>
         </>
     );
 };

@@ -49,7 +49,7 @@ const Game = (props: GameProps) => {
     }, [gameId]);
 
     return (
-        <Flex sx={{ flexDirection: 'column', alignItems: 'center' }}>
+        <Flex sx={{ flexDirection: 'column', alignItems: 'center', p: 1 }}>
             {gameState.phase !== 'start' &&
                 gameState.phase !== 'assign' &&
                 gameState.phase !== 'decision' && (

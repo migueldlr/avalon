@@ -18,8 +18,8 @@ export default {
     },
     space: [0, 4, 8, 16, 32, 64, 128, 256],
     fonts: {
-        body: 'Roboto, sans-serif',
-        heading: 'Nunito',
+        body: 'Merriweather, serif',
+        heading: 'Cinzel Decorative , serif',
         monospace: 'Menlo, monospace',
     },
     fontWeights: {
@@ -33,6 +33,10 @@ export default {
     },
     text: {
         fontFamily: 'body',
+        fontSize: [4, 3, 2],
+        heading: {
+            fontSize: [5, 6, 7],
+        },
     },
     styles: {
         root: {
@@ -44,19 +48,28 @@ export default {
     },
     buttons: {
         primary: {
+            fontFamily: 'heading',
             transition: 'color 1s',
             '&:hover': {
                 bg: '#8b53bc',
             },
         },
         disabled: {
+            fontFamily: 'heading',
             bg: '#dca8ff',
         },
         copy: {
+            fontFamily: 'body',
             bg: '#8c44d4',
         },
         selected: {
+            fontFamily: 'heading',
             bg: '#2c154a',
+        },
+    },
+    forms: {
+        input: {
+            fontFamily: 'body',
         },
     },
 };

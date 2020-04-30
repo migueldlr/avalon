@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'theme-ui';
+import 'typeface-lato';
+import 'typeface-merriweather';
+import 'typeface-cinzel-decorative';
 
 import * as serviceWorker from './serviceWorker';
 import App from './screens/App';

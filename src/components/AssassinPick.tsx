@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Checkbox, Text, Button } from 'theme-ui';
+import { Checkbox, Text, Button, Label, Box } from 'theme-ui';
 import { GameStateType, Role } from '../types';
 
 import { db } from '../firebase/index';
@@ -43,17 +43,20 @@ const AssassinPick = (props: AssassinPickProps) => {
         <>
             {thisPlayer?.role === 'assassin' && (
                 <>
-                    {goodies.map((p) => (
-                        <Text key={p.name}>
-                            <Checkbox
-                                name={p.uid}
-                                onClick={handleSelect}
-                                onChange={() => {}}
-                                checked={selectedPlayer === p.uid}
-                            />
-                            {p.name}
-                        </Text>
-                    ))}
+                    <Text>Who is Merlin?</Text>
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        {goodies.map((p) => (
+                            <Label key={p.name}>
+                                <Checkbox
+                                    name={p.uid}
+                                    onClick={handleSelect}
+                                    onChange={() => {}}
+                                    checked={selectedPlayer === p.uid}
+                                />
+                                {p.name}
+                            </Label>
+                        ))}
+                    </Box>
                     <Button
                         disabled={selectedPlayer == null}
                         variant={

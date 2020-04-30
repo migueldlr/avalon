@@ -11,10 +11,15 @@ const PlayerDisplay = (props: {
     currentTurn: number;
     phase: string;
     players: PlayerType[];
+    novotes: boolean;
 }) => {
-    const { order, currentTurn, phase, players } = props;
+    const { order, currentTurn, phase, players, novotes } = props;
     return (
-        <Flex sx={{ flexDirection: 'column' }}>
+        <Box
+            sx={{
+                flexDirection: 'column',
+                display: [novotes ? 'flex' : 'none', 'flex'],
+            }}>
             <Flex>&nbsp;</Flex>
             {order.map((i, idx) => {
                 return (
@@ -35,7 +40,7 @@ const PlayerDisplay = (props: {
                     </Flex>
                 );
             })}
-        </Flex>
+        </Box>
     );
 };
 
@@ -47,6 +52,8 @@ const MissionVote = (props: {
     missionNum: number;
     leaderStart: number;
     questResults: boolean[];
+    currentTurn: number;
+    phase: string;
 }) => {
     const {
         votes,
@@ -56,6 +63,8 @@ const MissionVote = (props: {
         missionNum,
         leaderStart,
         questResults,
+        currentTurn,
+        phase,
     } = props;
     const numPlayers = players.length;
     let leader = leaderStart;
@@ -65,59 +74,79 @@ const MissionVote = (props: {
                 columns={votes.length + 1}
                 gap={0}
                 sx={{
-                    gridTemplateColumns: 'none',
-                    minWidth: 7,
+                    gridTemplateColumns: ['auto auto', 'none'],
+                    minWidth: 'max-content',
                 }}>
                 <Box
-                    sx={{
-                        gridColumnStart: 1,
-                        gridColumnEnd: votes.length + 1,
-                        textAlign: 'center',
-                    }}>
-                    Quest {missionNum + 1}{' '}
-                    {questResults[missionNum] == null
-                        ? ''
-                        : questResults[missionNum]
-                        ? '🏰'
-                        : '💀'}
+                    sx={{ flexDirection: 'column', display: ['flex', 'none'] }}>
+                    <Flex>&nbsp;</Flex>
+                    {order.map((i, idx) => {
+                        return (
+                            <Flex
+                                key={i}
+                                sx={{
+                                    height: 4,
+                                    display: '',
+                                    alignItems: 'center',
+                                    fontWeight:
+                                        currentTurn === idx &&
+                                        phase !== 'assassin' &&
+                                        phase !== 'end'
+                                            ? '700'
+                                            : '400',
+                                }}>
+                                {players[i].name}
+                            </Flex>
+                        );
+                    })}
                 </Box>
+                <Grid gap={0}>
+                    <Box
+                        sx={{
+                            gridColumnStart: 1,
+                            gridColumnEnd: votes.length + 1,
+                            textAlign: 'center',
+                        }}>
+                        Quest {missionNum + 1}{' '}
+                        {questResults[missionNum] == null
+                            ? ''
+                            : questResults[missionNum]
+                            ? '🏰'
+                            : '💀'}
+                    </Box>
 
-                {votes.map((v, j) => {
-                    const ret = (
-                        <Box
-                            key={j}
-                            id={`col${leader}`}
-                            sx={{
-                                marginLeft: j === 0 && missionNum !== 0 ? 1 : 0,
-                            }}>
-                            {order.map((i, l) => {
-                                const u = players[i].uid;
-                                return (
-                                    // eslint-disable-next-line jsx-a11y/accessible-emoji
-                                    <Text
-                                        key={i}
-                                        sx={{
-                                            height: 4,
-                                            bg: v[u] ? 'yea' : 'nay',
-                                            textAlign: 'center',
-                                            border:
-                                                leader % numPlayers === l
-                                                    ? 'black solid 2px'
-                                                    : 'transparent solid 2px',
-                                            pt:
-                                                leader % numPlayers === l
-                                                    ? '-2px'
-                                                    : '',
-                                        }}>
-                                        {questers[j].includes(u) ? '🏹' : ''}
-                                    </Text>
-                                );
-                            })}
-                        </Box>
-                    );
-                    leader++;
-                    return ret;
-                })}
+                    {votes.map((v, j) => {
+                        const ret = (
+                            <Box key={j} id={`col${leader}`}>
+                                {order.map((i, l) => {
+                                    const u = players[i].uid;
+                                    return (
+                                        // eslint-disable-next-line jsx-a11y/accessible-emoji
+                                        <Text
+                                            key={i}
+                                            sx={{
+                                                height: 4,
+                                                minWidth: 4,
+                                                bg: v[u] ? 'yea' : 'nay',
+                                                textAlign: 'center',
+                                                border:
+                                                    leader % numPlayers === l
+                                                        ? 'black solid 2px'
+                                                        : 'transparent solid 2px',
+                                                fontSize: [0, 1],
+                                            }}>
+                                            {questers[j].includes(u)
+                                                ? '🏹'
+                                                : ''}
+                                        </Text>
+                                    );
+                                })}
+                            </Box>
+                        );
+                        leader++;
+                        return ret;
+                    })}
+                </Grid>
             </Grid>
         </Flex>
     );
@@ -127,12 +156,25 @@ const VotingResults = (props: VotingResultsProps) => {
     const { gameState } = props;
     let leader = 0;
     return (
-        <Flex sx={{ justifyContent: 'center' }}>
+        <Grid
+            columns={[1, gameState.currentTurn + 2]}
+            gap={2}
+            sx={{
+                gridTemplateColumns: [
+                    `1`,
+                    `repeat(${
+                        gameState.currentTurn +
+                        2 +
+                        (gameState.phase === 'voteQuest' ? 1 : 0)
+                    }, auto)`,
+                ],
+            }}>
             <PlayerDisplay
                 order={gameState.order}
                 currentTurn={gameState.currentTurn}
                 phase={gameState.phase}
                 players={gameState.players}
+                novotes={!gameState.teamVote}
             />
             {gameState.teamVote &&
                 gameState.teamVote.map((votes, i) => {
@@ -147,10 +189,12 @@ const VotingResults = (props: VotingResultsProps) => {
                             missionNum={i}
                             leaderStart={leader - votes.length}
                             questResults={gameState.questResults ?? []}
+                            currentTurn={gameState.currentTurn}
+                            phase={gameState.phase}
                         />
                     );
                 })}
-        </Flex>
+        </Grid>
     );
 };
 

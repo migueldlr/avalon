@@ -42,7 +42,7 @@ const VoteTeam = (props: VoteTeamProps) => {
 
     return (
         <>
-            <Text>
+            <Text sx={{ textAlign: 'center' }}>
                 {proposer} has proposed the following team: {listify(proposed)}
             </Text>
             <Text>What say you?</Text>

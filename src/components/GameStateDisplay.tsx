@@ -12,9 +12,17 @@ const GameStateDisplay = (props: GameStateDisplayProps) => {
 
     const [hover, setHover] = useState<number | null>(null);
     return (
-        <Box>
+        <Flex
+            id="GameStateDisplay"
+            sx={{ flexDirection: 'column', alignItems: 'center' }}>
             <VotingResults gameState={gameState} />
-            <Flex sx={{ flexDirection: 'row', alignItems: 'center', my: 2 }}>
+            <Flex
+                sx={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    my: 2,
+                }}>
                 {gameState.quests.map((x, i) => {
                     const res = (gameState.questResults ?? [])[i];
                     const dispnum =
@@ -29,8 +37,8 @@ const GameStateDisplay = (props: GameStateDisplayProps) => {
                         <Box
                             key={i}
                             sx={{
-                                width: 6,
-                                height: 6,
+                                width: [5, 6],
+                                height: [5, 6],
                                 display: 'flex',
                                 flexDirection: 'row',
                                 alignItems: 'center',
@@ -39,7 +47,7 @@ const GameStateDisplay = (props: GameStateDisplayProps) => {
                                     i === gameState.currentQuest
                                         ? '700'
                                         : '300',
-                                marginRight: i === 4 ? 0 : 3,
+                                mr: i === 4 ? 0 : [1, 3],
                             }}
                             onMouseEnter={() => setHover(i)}
                             onMouseLeave={() => setHover(null)}>
@@ -47,7 +55,8 @@ const GameStateDisplay = (props: GameStateDisplayProps) => {
                                 sx={{
                                     width: '100%',
                                     textAlign: 'center',
-                                    fontSize: 4,
+                                    fontSize: [4, 5],
+                                    fontFamily: 'heading',
                                 }}>
                                 {disp}
                             </Text>
@@ -77,7 +86,7 @@ const GameStateDisplay = (props: GameStateDisplayProps) => {
                 </Flex> */}
 
             {/* <Text>{JSON.stringify(gameState)}</Text> */}
-        </Box>
+        </Flex>
     );
 };
 
