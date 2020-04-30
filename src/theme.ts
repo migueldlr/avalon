@@ -34,6 +34,10 @@ export default {
     text: {
         fontFamily: 'body',
         fontSize: [4, 3, 2],
+        disclaimer: {
+            color: 'gray.8',
+            fontSize: '10px',
+        },
         heading: {
             fontSize: [5, 6, 7],
         },

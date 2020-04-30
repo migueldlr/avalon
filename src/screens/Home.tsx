@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { Box, Button, Input, Text, Heading } from 'theme-ui';
+import { Box, Button, Input, Text, Heading, Link, Image } from 'theme-ui';
 import { dbCreateRoom, dbJoinRoom, RoomResponse } from '../firebase/rooms';
 import { joinRoom } from '../store/room/actions';
+
+import githubIcon from '../img/github.png';
 
 interface HomeProps {
     joinRoom: typeof joinRoom;
@@ -73,6 +75,25 @@ const Home = (props: HomeProps) => {
                     Join Room
                 </Button>
                 <Text sx={{ height: '1em' }}>{message}</Text>
+            </Box>
+            <Box sx={{ mt: '45vh', position: 'absolute', textAlign: 'center' }}>
+                <Text variant="disclaimer">
+                    Based on Don Eskridge's{' '}
+                    <Text sx={{ fontStyle: 'italic', display: 'inline' }}>
+                        The Resistance
+                    </Text>
+                    .
+                </Text>
+                <Text variant="disclaimer">
+                    Made by Miguel de los Reyes and Seth Hollandsworth.
+                </Text>
+                <Link href="https://github.com/migueldlr/avalon">
+                    <Image
+                        src={githubIcon}
+                        alt="Link to GitHub page"
+                        sx={{ width: '20px', height: '20px', mt: 2 }}
+                    />
+                </Link>
             </Box>
         </>
     );
