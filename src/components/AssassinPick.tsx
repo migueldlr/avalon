@@ -20,11 +20,11 @@ const AssassinPick = (props: AssassinPickProps) => {
     const thisPlayer = getThisPlayer(gameState);
 
     const goodies = gameState.players.filter(
-        (p) => !isBad(p.role) && p.uid !== thisPlayer?.uid
+        (p) => !isBad(p.role) && p.uid !== thisPlayer?.uid,
     );
 
     const handleSelect = (
-        e: React.MouseEvent<HTMLInputElement, MouseEvent>
+        e: React.MouseEvent<HTMLInputElement, MouseEvent>,
     ) => {
         const target = e.target as HTMLInputElement;
         setSelectedPlayer(target.checked ? target.name : null);

@@ -89,7 +89,7 @@ const Lobby = (props: LobbyProps) => {
     };
 
     const handleSelect = (
-        e: React.MouseEvent<HTMLInputElement, MouseEvent>
+        e: React.MouseEvent<HTMLInputElement, MouseEvent>,
     ) => {
         const target = e.target as HTMLInputElement;
         setPercivalMorgana(target.checked);

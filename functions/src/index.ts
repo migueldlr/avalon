@@ -81,7 +81,7 @@ const updateGame = (
     gameState: GameStateType,
     gameIn: GameInType,
     dbRef: admin.database.Reference,
-    gameId: string
+    gameId: string,
 ): Promise<any> | null => {
     console.log('hot reloading!');
     const gameRef = dbRef.child(`games/${gameId}`);
@@ -108,13 +108,13 @@ const updateGame = (
     } else if (
         gameState.phase === 'voteTeam' &&
         Object.values(
-            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote]
+            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote],
         ).length === gameState.numPlayers
     ) {
         console.log(2);
 
         const yeas = Object.values(
-            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote]
+            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote],
         ).filter((v) => v).length;
         if (yeas > 0.5 * gameState.numPlayers) {
             return gameInRef.update({ questVote: [] }).then(() => {
@@ -251,7 +251,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
     if (numPlayers > 11 || numPlayers < 5)
         throw new functions.https.HttpsError(
             'invalid-argument',
-            'Number of players must be between 5 and 10'
+            'Number of players must be between 5 and 10',
         );
     const roles = getRoles(numPlayers, includePercivalMorgana);
     const players = Object.entries(roomData).map(([k, u], i) => ({
