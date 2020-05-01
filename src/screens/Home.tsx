@@ -58,7 +58,10 @@ const Home = (props: HomeProps) => {
             </Heading>
             <Box sx={{ textAlign: 'center' }}>
                 <Input
-                    sx={{ mb: '1em' }}
+                    sx={{
+                        mb: '1em',
+                        borderColor: nameInput !== '' ? '' : 'outlinefocused',
+                    }}
                     onChange={(e) => setNameInput(e.target.value)}
                     value={nameInput}
                     placeholder="Your Name"
@@ -71,7 +74,9 @@ const Home = (props: HomeProps) => {
                     Create Room
                 </Button>
                 <Input
-                    sx={{ width: '100%' }}
+                    sx={{
+                        borderColor: roomIdInput !== '' ? '' : 'outlinefocused',
+                    }}
                     onChange={(e) => setRoomIdInput(e.target.value)}
                     value={roomIdInput}
                     placeholder="Room Code"
