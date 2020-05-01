@@ -43,6 +43,7 @@ const GameStateDisplay = (props: GameStateDisplayProps) => {
                                 flexDirection: 'row',
                                 alignItems: 'center',
                                 border: 'black solid 1px',
+                                borderColor: 'text',
                                 fontWeight:
                                     i === gameState.currentQuest
                                         ? '700'

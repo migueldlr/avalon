@@ -102,7 +102,7 @@ const Lobby = (props: LobbyProps) => {
                 onClick={() => {
                     navigator.clipboard.writeText(roomId);
                 }}
-                variant="copy">
+                sx={{ fontFamily: 'body' }}>
                 {roomId}
             </Button>
             <Flex sx={{ flexDirection: 'column' }}>
