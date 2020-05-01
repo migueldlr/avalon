@@ -12,12 +12,14 @@ interface AssignRoleProps {
 const roleText: Record<Role, string> = {
     good: 'a loyal servant of Arthur 🏰',
     merlin: 'the wise wizard Merlin 🏰',
+    percival: 'a loyal servant of Arthur that can identify Merlin 🏰',
     bad: 'an evil minion of Mordred 💀',
     assassin: 'the evil Assassin 💀',
+    morgana: 'an evil minion of Mordred that can confuse Percival 💀',
 };
 
 const isBad = (role: Role) => {
-    return role === 'assassin' || role === 'bad';
+    return role === 'assassin' || role === 'bad' || role === 'morgana';
 };
 
 const AssignRole = (props: AssignRoleProps) => {

@@ -1,4 +1,10 @@
-export type Role = 'bad' | 'good' | 'merlin' | 'assassin';
+export type Role =
+    | 'bad'
+    | 'good'
+    | 'merlin'
+    | 'assassin'
+    | 'morgana'
+    | 'percival';
 
 export interface PlayerType {
     uid: string;
@@ -39,4 +45,5 @@ interface GameInType {
     continue: { [uid: string]: number };
     proposed: string[][][];
     assassinPick: string;
+    includePercivalMorgana: boolean;
 }
