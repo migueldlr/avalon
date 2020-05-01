@@ -133,6 +133,10 @@ const MissionVote = (props: {
                                                     leader % numPlayers === l
                                                         ? 'black solid 2px'
                                                         : 'transparent solid 2px',
+                                                borderColor:
+                                                    leader % numPlayers === l
+                                                        ? 'text'
+                                                        : '',
                                                 fontSize: [0, 1],
                                             }}>
                                             {questers[j].includes(u)
@@ -157,13 +161,13 @@ const VotingResults = (props: VotingResultsProps) => {
     let leader = 0;
     return (
         <Grid
-            columns={[1, gameState.currentTurn + 2]}
+            // columns={[1, gameState.currentTurn + 2]}
             gap={2}
             sx={{
                 gridTemplateColumns: [
                     `1`,
                     `repeat(${
-                        gameState.currentTurn +
+                        gameState.currentQuest +
                         2 +
                         (gameState.phase === 'voteQuest' ? 1 : 0)
                     }, auto)`,

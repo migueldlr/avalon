@@ -86,7 +86,7 @@ const Lobby = (props: LobbyProps) => {
                 onClick={() => {
                     navigator.clipboard.writeText(roomId);
                 }}
-                variant="copy">
+                sx={{ fontFamily: 'body' }}>
                 {roomId}
             </Button>
             <Flex sx={{ flexDirection: 'column' }}>
@@ -97,7 +97,11 @@ const Lobby = (props: LobbyProps) => {
                     </Text>
                 ))}
             </Flex>
-            {isHost && <Button onClick={handleCreateGame}>Start Game</Button>}
+            {isHost && (
+                <Button onClick={handleCreateGame} sx={{ mr: 1 }}>
+                    Start Game
+                </Button>
+            )}
             <Button onClick={handleLeaveRoom}>Leave Room</Button>
         </Box>
     );
