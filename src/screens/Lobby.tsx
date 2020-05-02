@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Box, Text, Button, Flex, Checkbox, Label, Heading } from 'theme-ui';
+import { Box, Text, Button, Flex, Checkbox, Label } from 'theme-ui';
 
 import { leaveRoom } from '../store/room/actions';
 import { joinGame } from '../store/game/actions';
@@ -25,9 +25,6 @@ const Lobby = (props: LobbyProps) => {
     });
     const [percivalMorgana, setPercivalMorgana] = useState<boolean>(false);
     const [userList, setUserList] = useState<Array<string>>([]);
-    useEffect(() => {
-        console.log(`userList: ${JSON.stringify(userList)}`);
-    });
 
     useEffect(() => {
         if (roomId == null) return;
@@ -48,7 +45,6 @@ const Lobby = (props: LobbyProps) => {
 
             // firestore will update before redux sometimes so we don't want to try to read from playerState yet
             if (playerState == null) return;
-            console.log(JSON.stringify(playerState));
 
             const players: [string, string][] = Object.entries(playerState);
 
@@ -68,7 +64,6 @@ const Lobby = (props: LobbyProps) => {
         roomRef.child('opts').on('value', (snap) => {
             const opts = snap.val();
             if (opts == null) return;
-            console.log(opts);
             if (opts.percivalMorgana != null)
                 setPercivalMorgana(opts.percivalMorgana);
         });
@@ -107,7 +102,6 @@ const Lobby = (props: LobbyProps) => {
                 console.log(err);
             });
     };
-    console.log(host);
     const isHost = host.uid === uid;
     return (
         <Box>

@@ -16,7 +16,6 @@ import { ReactComponent as SunIcon } from '../img/brightness.svg';
 
 import githubIcon from '../img/github.png';
 import githubIconLight from '../img/githublight.png';
-import theme from '../theme';
 
 interface HomeProps {
     joinRoom: typeof joinRoom;

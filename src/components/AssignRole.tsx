@@ -25,7 +25,7 @@ const isBad = (role: Role) => {
 const AssignRole = (props: AssignRoleProps) => {
     const { gameState, gameId } = props;
     const [canClick, setCanClick] = useState(false);
-    const [first, setFirst] = useState(Math.random() < 0.5 ? 0 : 1);
+    const [first] = useState(Math.random() < 0.5 ? 0 : 1);
 
     const uid = auth.currentUser?.uid;
     useEffect(() => {
