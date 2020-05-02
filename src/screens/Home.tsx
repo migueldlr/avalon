@@ -26,6 +26,7 @@ const Home = (props: HomeProps) => {
     const [nameInput, setNameInput] = useState('');
     const [message, setMessage] = useState('');
     const [colorMode, setColorMode] = useColorMode();
+    const [egg, setEgg] = useState(false);
 
     const handleCreate = async () => {
         const roomId = await dbCreateRoom(nameInput);
@@ -53,7 +54,7 @@ const Home = (props: HomeProps) => {
     return (
         <>
             <Heading sx={{ textAlign: 'center' }}>
-                The Resistance: Avalon
+                {egg ? 'Hey Tribe, Miguel Here' : 'The Resistance: Avalon'}
             </Heading>
             <Box sx={{ textAlign: 'center' }}>
                 <Input
@@ -102,7 +103,8 @@ const Home = (props: HomeProps) => {
                     .
                 </Text>
                 <Text variant="disclaimer">
-                    Made by Miguel de los Reyes and Seth Hollandsworth.
+                    Made by Miguel <span onClick={() => setEgg(!egg)}>de</span>{' '}
+                    los Reyes and Seth Hollandsworth.
                 </Text>
                 <Box sx={{ mt: 2 }}>
                     <Link href="https://github.com/migueldlr/avalon">
