@@ -7,8 +7,8 @@ import { joinGame } from '../store/game/actions';
 import { dbLeaveRoom, dbGetRoomRef } from '../firebase/rooms';
 import { AppState } from '../store';
 import { dbCreateGame, dbGetGameRef } from '../firebase/game';
-import { auth } from '../firebase/index';
-import { db } from '../firebase/index';
+import { auth, db } from '../firebase/index';
+import { RoomState, RoomPlayer } from '../types';
 
 interface LobbyProps {
     roomId: string | null;
@@ -19,12 +19,15 @@ interface LobbyProps {
 const Lobby = (props: LobbyProps) => {
     const { roomId, joinGame } = props;
     const uid = auth.currentUser?.uid;
-    const [userList, setUserList] = useState<Array<string>>([]);
     const [host, setHost] = useState<{ name: string; uid: string }>({
         name: '',
         uid: '',
     });
     const [percivalMorgana, setPercivalMorgana] = useState<boolean>(false);
+    const [userList, setUserList] = useState<Array<string>>([]);
+    useEffect(() => {
+        console.log(`userList: ${JSON.stringify(userList)}`);
+    });
 
     useEffect(() => {
         if (roomId == null) return;
@@ -40,22 +43,34 @@ const Lobby = (props: LobbyProps) => {
         })(roomId);
 
         const roomRef = dbGetRoomRef(roomId);
-        roomRef.on('value', (snap) => {
-            const snapVal = snap.val();
+        roomRef.child('players').on('value', (snap) => {
+            const playerState: RoomPlayer = snap.val();
 
-            // firestore will update before redux sometimes so we don't want to try to read from snapVal yet
-            if (snapVal == null) return;
+            // firestore will update before redux sometimes so we don't want to try to read from playerState yet
+            if (playerState == null) return;
+            console.log(JSON.stringify(playerState));
 
-            const data: Array<{ name: string }> = Object.values(snapVal);
-            setUserList(data.map((u) => u.name));
+            const players: [string, string][] = Object.entries(playerState);
+
+            setUserList(players.map((u) => u[1]));
         });
-        roomRef.once('value').then(function (dataSnapshot) {
-            const val: {
-                [uid: string]: { host: boolean; name: string };
-            } = dataSnapshot.val(); // get the data at this ref
-            const hostIndex = Object.values(val).findIndex((e) => e.host);
-            const hostObj = Object.entries(val)[hostIndex];
-            setHost({ uid: hostObj[0], name: hostObj[1].name });
+
+        roomRef.child('host').on('value', (snap) => {
+            const hostUid = snap.val();
+            roomRef
+                .child('players')
+                .child(hostUid)
+                .once('value', (snap2) => {
+                    const name = snap2.val();
+                    setHost({ uid: hostUid, name });
+                });
+        });
+        roomRef.child('opts').on('value', (snap) => {
+            const opts = snap.val();
+            if (opts == null) return;
+            console.log(opts);
+            if (opts.percivalMorgana != null)
+                setPercivalMorgana(opts.percivalMorgana);
         });
     }, [roomId, joinGame]);
     if (roomId == null)
@@ -77,58 +92,64 @@ const Lobby = (props: LobbyProps) => {
 
     const handleCreateGame = async () => {
         // TODO: make the users in the room go one field inward so they all have a unique key and this reference won't clog that
-        db.ref(`rooms/${roomId}/includePercivalMorgana`)
-            .set(percivalMorgana)
-            .catch((err) => {
-                // eslint-disable-next-line no-console
-                console.log(err);
-            });
+
         const gameId = await dbCreateGame(roomId);
         if (gameId == null) return;
         props.joinGame(gameId);
     };
 
-    const handleSelect = (
-        e: React.MouseEvent<HTMLInputElement, MouseEvent>,
-    ) => {
+    const togglePM = (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
         const target = e.target as HTMLInputElement;
-        setPercivalMorgana(target.checked);
+        db.ref(`rooms/${roomId}/opts/percivalMorgana`)
+            .set(target.checked)
+            .catch((err) => {
+                // eslint-disable-next-line no-console
+                console.log(err);
+            });
     };
-
+    console.log(host);
     const isHost = host.uid === uid;
     return (
         <Box>
-            <Button
-                onClick={() => {
-                    navigator.clipboard.writeText(roomId);
-                }}
-                sx={{ fontFamily: 'body' }}>
-                {roomId}
-            </Button>
-            <Flex sx={{ flexDirection: 'column' }}>
-                {userList.map((uname) => (
-                    <Text key={uname}>
-                        {host.name === uname ? '👑' : ''}
-                        {uname}
-                    </Text>
-                ))}
+            <Flex>
+                <Box>
+                    <Button
+                        onClick={() => {
+                            navigator.clipboard.writeText(roomId);
+                        }}
+                        sx={{ fontFamily: 'body' }}>
+                        {roomId}
+                    </Button>
+                    <Flex sx={{ flexDirection: 'column' }}>
+                        {userList.map((uname) => (
+                            <Text key={uname}>
+                                {host.name === uname ? '👑' : ''}
+                                {uname}
+                            </Text>
+                        ))}
+                    </Flex>
+                    {isHost && (
+                        <Flex sx={{ flexDirection: 'row' }}>
+                            <Button onClick={handleCreateGame}>
+                                Start Game
+                            </Button>
+                        </Flex>
+                    )}
+                    <Button onClick={handleLeaveRoom}>Leave Room</Button>
+                </Box>
+                <Box>
+                    <Label>
+                        <Checkbox
+                            onClick={(e) => {
+                                if (isHost) togglePM(e);
+                            }}
+                            onChange={() => {}}
+                            checked={percivalMorgana}
+                        />
+                        Percival and Morgana
+                    </Label>
+                </Box>
             </Flex>
-            {isHost && (
-                <Flex sx={{ flexDirection: 'row' }}>
-                    <Button onClick={handleCreateGame}>Start Game</Button>
-
-                    <Box>
-                        <Label key="Add Percival and Morgana?">
-                            <Checkbox
-                                name="Add Percival and Morgana?"
-                                onClick={handleSelect}
-                            />
-                            {'Add Percival and Morgana?'}
-                        </Label>
-                    </Box>
-                </Flex>
-            )}
-            <Button onClick={handleLeaveRoom}>Leave Room</Button>
         </Box>
     );
 };

@@ -12,13 +12,14 @@ export const dbCreateRoom = async (name: string) => {
     const uid = auth.currentUser?.uid;
     const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 6);
     const roomId = nanoid();
-    const roomRef = db.ref(`rooms/${roomId}/${uid}`);
+    const roomRef = db.ref(`rooms/${roomId}/players/${uid}`);
     try {
         await roomRef
             .onDisconnect()
             .remove()
             .then(() => {
-                roomRef.set({ host: true, name });
+                roomRef.set(name);
+                db.ref(`rooms/${roomId}/host`).set(uid);
             });
         return roomId;
     } catch (err) {
@@ -33,7 +34,7 @@ export const dbJoinRoom = async (
     roomId: string,
 ): Promise<RoomResponse> => {
     const uid = auth.currentUser?.uid;
-    const roomRef = db.ref(`rooms/${roomId}/${uid}`);
+    const roomRef = db.ref(`rooms/${roomId}/players/${uid}`);
     try {
         const roomSnap: Array<{ name: string }> | null = (
             await db.ref(`rooms/${roomId}`).once('value')
@@ -47,7 +48,7 @@ export const dbJoinRoom = async (
             .onDisconnect()
             .remove()
             .then(() => {
-                roomRef.set({ host: false, name });
+                roomRef.set(name);
             });
 
         return RoomResponse.OK;

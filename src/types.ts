@@ -12,6 +12,15 @@ export interface PlayerType {
     role: Role;
 }
 
+export interface RoomState {
+    opts: { [opt: string]: boolean };
+    players: RoomPlayer;
+}
+
+export interface RoomPlayer {
+    [uid: string]: string;
+}
+
 export interface GameStateType {
     phase:
         | 'assign'
@@ -45,5 +54,4 @@ interface GameInType {
     continue: { [uid: string]: number };
     proposed: string[][][];
     assassinPick: string;
-    includePercivalMorgana: boolean;
 }
