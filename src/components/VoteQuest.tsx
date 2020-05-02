@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Box, Text, Button } from 'theme-ui';
+import { connect } from 'react-redux';
+
+import { AppState } from '../store/index';
 import { GameStateType } from '../types';
 
 import { db, auth } from '../firebase/index';
@@ -73,4 +76,7 @@ const VoteQuest = (props: VoteQuestProps) => {
     return <>{listify(questers)} are on the quest...</>;
 };
 
-export default VoteQuest;
+export default connect((state: AppState) => ({
+    gameId: state.game.gameId ?? '',
+    gameState: state.game.gameState,
+}))(VoteQuest);

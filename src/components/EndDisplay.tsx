@@ -1,5 +1,8 @@
 import React from 'react';
 import { Text, Flex, Grid } from 'theme-ui';
+import { connect } from 'react-redux';
+
+import { AppState } from '../store/index';
 import { GameStateType } from '../types';
 
 interface EndDisplayProps {
@@ -41,4 +44,7 @@ const EndDisplay = (props: EndDisplayProps) => {
     );
 };
 
-export default EndDisplay;
+export default connect((state: AppState) => ({
+    gameId: state.game.gameId ?? '',
+    gameState: state.game.gameState,
+}))(EndDisplay);

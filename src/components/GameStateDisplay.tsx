@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Text, Flex } from 'theme-ui';
+import { connect } from 'react-redux';
+import { AppState } from '../store/index';
 import { GameStateType } from '../types';
 import VotingResults from './VotingResults';
 
@@ -91,4 +93,7 @@ const GameStateDisplay = (props: GameStateDisplayProps) => {
     );
 };
 
-export default GameStateDisplay;
+export default connect((state: AppState) => ({
+    gameId: state.game.gameId ?? '',
+    gameState: state.game.gameState,
+}))(GameStateDisplay);

@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Box, Text, Button, Checkbox, Label } from 'theme-ui';
+import { connect } from 'react-redux';
+
+import { AppState } from '../store/index';
 import { GameStateType } from '../types';
 import { db, auth } from '../firebase/index';
 
@@ -75,4 +78,7 @@ const PickTeam = (props: PickTeamProps) => {
     );
 };
 
-export default PickTeam;
+export default connect((state: AppState) => ({
+    gameId: state.game.gameId ?? '',
+    gameState: state.game.gameState,
+}))(PickTeam);

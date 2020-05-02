@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { db, auth } from '../firebase/index';
 import { Box, Text, Button } from 'theme-ui';
+import { connect } from 'react-redux';
+
+import { AppState } from '../store/index';
 import { GameStateType } from '../types';
 import { listify } from '../utils';
 
@@ -68,4 +71,7 @@ const VoteTeam = (props: VoteTeamProps) => {
     );
 };
 
-export default VoteTeam;
+export default connect((state: AppState) => ({
+    gameId: state.game.gameId ?? '',
+    gameState: state.game.gameState,
+}))(VoteTeam);

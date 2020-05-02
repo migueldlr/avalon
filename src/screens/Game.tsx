@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Flex } from 'theme-ui';
+import { Flex, Text } from 'theme-ui';
 import { AppState } from '../store/index';
 
 import { dbGetGameRef } from '../firebase/game';
@@ -13,30 +13,16 @@ import DecisionDisplay from '../components/DecisionDisplay';
 import AssassinPick from '../components/AssassinPick';
 import GameStateDisplay from '../components/GameStateDisplay';
 import EndDisplay from '../components/EndDisplay';
+import { updateGame } from '../store/game/actions';
 
 interface GameProps {
     gameId: string;
+    gameState: GameStateType;
+    updateGame: typeof updateGame;
 }
 
 const Game = (props: GameProps) => {
-    const { gameId } = props;
-    const [gameState, setGameState] = useState<GameStateType>({
-        phase: 'start',
-        numPlayers: 0,
-        order: [],
-        currentTurn: -1,
-        players: [],
-        proposed: [],
-        currentQuest: -1,
-        currentTeamVote: -1,
-        quests: [],
-        questResults: [],
-        questVote: [],
-        finalResult: 'good',
-        rejects: -1,
-        assassinPick: '',
-        teamVote: [],
-    });
+    const { gameId, updateGame, gameState } = props;
 
     useEffect(() => {
         const gameRef = dbGetGameRef(gameId);
@@ -44,40 +30,32 @@ const Game = (props: GameProps) => {
             const snapVal = snap.val();
 
             if (snapVal == null) return;
-            setGameState(snapVal);
+            updateGame(snapVal);
         });
-    }, [gameId]);
-
+    }, [gameId, updateGame]);
+    const { phase } = gameState;
+    if (phase === 'start') return <Text>Loading...</Text>;
+    const phaseComponent: Record<typeof phase, JSX.Element> = {
+        assign: <AssignRole />,
+        turn: <PickTeam />,
+        voteTeam: <VoteTeam />,
+        voteQuest: <VoteQuest />,
+        decision: <DecisionDisplay />,
+        assassin: <AssassinPick />,
+        end: <EndDisplay />,
+    };
     return (
         <Flex sx={{ flexDirection: 'column', alignItems: 'center', p: 1 }}>
-            {gameState.phase !== 'start' &&
-                gameState.phase !== 'assign' &&
-                gameState.phase !== 'decision' && (
-                    <GameStateDisplay gameState={gameState} />
-                )}
-            {gameState.phase === 'assign' && (
-                <AssignRole gameState={gameState} gameId={gameId} />
-            )}
-            {gameState.phase === 'turn' && (
-                <PickTeam gameState={gameState} gameId={gameId} />
-            )}
-            {gameState.phase === 'voteTeam' && (
-                <VoteTeam gameState={gameState} gameId={gameId} />
-            )}
-            {gameState.phase === 'voteQuest' && (
-                <VoteQuest gameState={gameState} gameId={gameId} />
-            )}
-            {gameState.phase === 'decision' && (
-                <DecisionDisplay gameState={gameState} gameId={gameId} />
-            )}
-            {gameState.phase === 'assassin' && (
-                <AssassinPick gameState={gameState} gameId={gameId} />
-            )}
-            {gameState.phase === 'end' && <EndDisplay gameState={gameState} />}
+            {phase !== 'assign' && phase !== 'decision' && <GameStateDisplay />}
+            {phaseComponent[phase]}
         </Flex>
     );
 };
 
-export default connect((state: AppState) => ({
-    gameId: state.game.gameId ?? '',
-}))(Game);
+export default connect(
+    (state: AppState) => ({
+        gameId: state.game.gameId ?? '',
+        gameState: state.game.gameState,
+    }),
+    { updateGame },
+)(Game);

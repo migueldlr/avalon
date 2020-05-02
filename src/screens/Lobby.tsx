@@ -86,8 +86,6 @@ const Lobby = (props: LobbyProps) => {
     };
 
     const handleCreateGame = async () => {
-        // TODO: make the users in the room go one field inward so they all have a unique key and this reference won't clog that
-
         const gameId = await dbCreateGame(roomId);
         if (gameId == null) return;
         props.joinGame(gameId);

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Text } from 'theme-ui';
+import { connect } from 'react-redux';
+
+import { AppState } from '../store/index';
 import { GameStateType } from '../types';
 
 import { db, auth } from '../firebase/index';
@@ -70,4 +73,7 @@ const DecisionDisplay = (props: DecisionDisplayProps) => {
     );
 };
 
-export default DecisionDisplay;
+export default connect((state: AppState) => ({
+    gameId: state.game.gameId ?? '',
+    gameState: state.game.gameState,
+}))(DecisionDisplay);

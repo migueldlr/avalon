@@ -258,7 +258,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
             'invalid-argument',
             'Number of players must be between 5 and 10',
         );
-    const roles = getRoles(numPlayers, roomData.opts.percivalMorgana ?? false);
+    const roles = getRoles(numPlayers, roomData.opts?.percivalMorgana ?? false);
     const players = Object.entries(roomData.players).map(([uid, name], i) => ({
         uid,
         name,

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Text, Button } from 'theme-ui';
+import { connect } from 'react-redux';
+
+import { AppState } from '../store/index';
 import { GameStateType, Role } from '../types';
 import { listify } from '../utils';
 import { db, auth } from '../firebase';
@@ -91,4 +94,7 @@ const AssignRole = (props: AssignRoleProps) => {
     );
 };
 
-export default AssignRole;
+export default connect((state: AppState) => ({
+    gameId: state.game.gameId ?? '',
+    gameState: state.game.gameState,
+}))(AssignRole);

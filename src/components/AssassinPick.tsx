@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Checkbox, Text, Button, Label, Box } from 'theme-ui';
+import { connect } from 'react-redux';
+
+import { AppState } from '../store/index';
 import { GameStateType, Role } from '../types';
 
 import { db } from '../firebase/index';
@@ -74,4 +77,7 @@ const AssassinPick = (props: AssassinPickProps) => {
     );
 };
 
-export default AssassinPick;
+export default connect((state: AppState) => ({
+    gameId: state.game.gameId ?? '',
+    gameState: state.game.gameState,
+}))(AssassinPick);
