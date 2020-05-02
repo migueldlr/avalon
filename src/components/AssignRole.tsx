@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { AppState } from '../store/index';
 import { GameStateType, Role } from '../types';
-import { listify } from '../utils';
+import { listify, isBad } from '../utils';
 import { db, auth } from '../firebase';
 
 interface AssignRoleProps {
@@ -19,10 +19,6 @@ const roleText: Record<Role, string> = {
     bad: 'an evil minion of Mordred 💀',
     assassin: 'the vicious Assassin 💀',
     morgana: 'the sinister Morgana 💀',
-};
-
-const isBad = (role: Role) => {
-    return role === 'assassin' || role === 'bad' || role === 'morgana';
 };
 
 const AssignRole = (props: AssignRoleProps) => {

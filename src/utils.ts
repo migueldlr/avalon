@@ -1,5 +1,5 @@
 import { auth } from './firebase/index';
-import { GameStateType } from './types';
+import { GameStateType, Role } from './types';
 
 export const listify = (l: string[]) => {
     if (l.length === 1) return l[0];
@@ -11,4 +11,8 @@ export const listify = (l: string[]) => {
 export const getThisPlayer = (gameState: GameStateType) => {
     const uid = auth.currentUser?.uid;
     return gameState.players.find((p) => p.uid === uid);
+};
+
+export const isBad = (role: Role) => {
+    return role === 'assassin' || role === 'bad' || role === 'morgana';
 };
