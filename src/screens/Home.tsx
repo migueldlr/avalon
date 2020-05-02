@@ -8,6 +8,7 @@ import {
     Heading,
     Link,
     Image,
+    Flex,
     useColorMode,
 } from 'theme-ui';
 import { dbCreateRoom, dbJoinRoom, RoomResponse } from '../firebase/rooms';
@@ -106,7 +107,12 @@ const Home = (props: HomeProps) => {
                     Made by Miguel <span onClick={() => setEgg(!egg)}>de</span>{' '}
                     los Reyes and Seth Hollandsworth.
                 </Text>
-                <Box sx={{ mt: 2 }}>
+                <Flex
+                    sx={{
+                        mt: 2,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}>
                     <Link href="https://github.com/migueldlr/avalon">
                         <Image
                             src={
@@ -118,17 +124,21 @@ const Home = (props: HomeProps) => {
                             sx={{ width: '20px', height: '20px', mr: 2 }}
                         />
                     </Link>
-                    <SunIcon
-                        fill={colorMode === 'default' ? 'black' : 'white'}
-                        onClick={(e) => {
-                            setColorMode(
-                                colorMode === 'default' ? 'dark' : 'default',
-                            );
-                        }}
-                        width="20px"
-                        height="20px"
-                    />
-                </Box>
+                    <Box sx={{ cursor: 'pointer' }}>
+                        <SunIcon
+                            fill={colorMode === 'default' ? 'black' : 'white'}
+                            onClick={(e) => {
+                                setColorMode(
+                                    colorMode === 'default'
+                                        ? 'dark'
+                                        : 'default',
+                                );
+                            }}
+                            width="20px"
+                            height="20px"
+                        />
+                    </Box>
+                </Flex>
             </Box>
         </>
     );
