@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Box, Text, Button, Flex, Checkbox, Label } from 'theme-ui';
+import { Box, Text, Button, Flex, Checkbox, Label, Heading } from 'theme-ui';
 
 import { leaveRoom } from '../store/room/actions';
 import { joinGame } from '../store/game/actions';
@@ -8,7 +8,7 @@ import { dbLeaveRoom, dbGetRoomRef } from '../firebase/rooms';
 import { AppState } from '../store';
 import { dbCreateGame, dbGetGameRef } from '../firebase/game';
 import { auth, db } from '../firebase/index';
-import { RoomState, RoomPlayer } from '../types';
+import { RoomPlayer } from '../types';
 
 interface LobbyProps {
     roomId: string | null;
@@ -112,7 +112,7 @@ const Lobby = (props: LobbyProps) => {
     return (
         <Box>
             <Flex>
-                <Box>
+                <Box sx={{ pr: 2 }}>
                     <Button
                         onClick={() => {
                             navigator.clipboard.writeText(roomId);
