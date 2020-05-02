@@ -12,17 +12,20 @@ interface AssignRoleProps {
 const roleText: Record<Role, string> = {
     good: 'a loyal servant of Arthur 🏰',
     merlin: 'the wise wizard Merlin 🏰',
+    percival: 'the brave Percival 🏰',
     bad: 'an evil minion of Mordred 💀',
-    assassin: 'the evil Assassin 💀',
+    assassin: 'the vicious Assassin 💀',
+    morgana: 'the sinister Morgana 💀',
 };
 
 const isBad = (role: Role) => {
-    return role === 'assassin' || role === 'bad';
+    return role === 'assassin' || role === 'bad' || role === 'morgana';
 };
 
 const AssignRole = (props: AssignRoleProps) => {
     const { gameState, gameId } = props;
     const [canClick, setCanClick] = useState(false);
+    const [first, setFirst] = useState(Math.random() < 0.5 ? 0 : 1);
 
     const uid = auth.currentUser?.uid;
     useEffect(() => {
@@ -45,6 +48,9 @@ const AssignRole = (props: AssignRoleProps) => {
     const baddies = gameState.players
         .filter((p) => isBad(p.role) && p.uid !== thisPlayer?.uid)
         .map((p) => p.name);
+    const merlinMorgana = gameState.players
+        .filter((p) => p.role === 'morgana' || p.role === 'merlin')
+        .map((p) => p.name);
 
     return (
         <Box>
@@ -59,7 +65,17 @@ const AssignRole = (props: AssignRoleProps) => {
                         </Text>
                     )}
                     {thisPlayer.role === 'merlin' && (
-                        <Text>The minions of Mordred: {listify(baddies)}</Text>
+                        <Text>
+                            Your prophetic powers reveal to you the minions of
+                            Mordred: {listify(baddies)}
+                        </Text>
+                    )}
+                    {thisPlayer.role === 'percival' && (
+                        <Text>
+                            Your holy powers reveal Merlin to be:{' '}
+                            {merlinMorgana[0 + first]} or{' '}
+                            {merlinMorgana[1 - first]}
+                        </Text>
                     )}
                 </>
             )}

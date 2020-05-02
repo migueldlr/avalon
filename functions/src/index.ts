@@ -5,7 +5,7 @@ import { shuffle } from './util';
 admin.initializeApp();
 const db = admin.database();
 
-const getRoles = (n: number): string[] => {
+const getRoles = (n: number, percivalMorgana: boolean): string[] => {
     const goodBadMap: Record<number, number[]> = {
         5: [3, 2],
         6: [4, 2],
@@ -19,6 +19,10 @@ const getRoles = (n: number): string[] => {
     good[0] = 'merlin';
     const bad = new Array(goodBad[1]).fill('bad');
     bad[0] = 'assassin';
+    if (percivalMorgana) {
+        good[1] = 'percival';
+        bad[1] = 'morgana';
+    }
     const roles = shuffle(good.concat(bad));
     return roles;
 };
@@ -34,6 +38,15 @@ const getQuests = (n: number): number[] => {
     };
     return numToGameMap[n];
 };
+
+interface RoomState {
+    opts: { [opt: string]: boolean };
+    players: RoomPlayer;
+}
+
+interface RoomPlayer {
+    [uid: string]: string;
+}
 
 interface PlayerType {
     uid: string;
@@ -234,19 +247,21 @@ export const updateGameListener = functions.database
 
 export const createGame = functions.https.onCall(async (data, context) => {
     const roomId = data.roomId;
-    const roomData: { [k: string]: { name: string } } = (
+
+    const roomData: RoomState = (
         await db.ref(`rooms/${roomId}`).once('value')
     ).val();
-    const numPlayers = Object.entries(roomData).length;
-    if (numPlayers > 11 || numPlayers < 5)
+
+    const numPlayers = Object.entries(roomData.players).length;
+    if (numPlayers > 10 || numPlayers < 5)
         throw new functions.https.HttpsError(
             'invalid-argument',
             'Number of players must be between 5 and 10',
         );
-    const roles = getRoles(numPlayers);
-    const players = Object.entries(roomData).map(([k, u], i) => ({
-        uid: k,
-        name: u.name,
+    const roles = getRoles(numPlayers, roomData.opts.percivalMorgana ?? false);
+    const players = Object.entries(roomData.players).map(([uid, name], i) => ({
+        uid,
+        name,
         role: roles[i],
     }));
 

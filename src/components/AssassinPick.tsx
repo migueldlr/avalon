@@ -11,7 +11,7 @@ interface AssassinPickProps {
 }
 
 const isBad = (role: Role) => {
-    return role === 'assassin' || role === 'bad';
+    return role === 'assassin' || role === 'bad' || role === 'morgana';
 };
 
 const AssassinPick = (props: AssassinPickProps) => {

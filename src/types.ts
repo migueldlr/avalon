@@ -1,9 +1,24 @@
-export type Role = 'bad' | 'good' | 'merlin' | 'assassin';
+export type Role =
+    | 'bad'
+    | 'good'
+    | 'merlin'
+    | 'assassin'
+    | 'morgana'
+    | 'percival';
 
 export interface PlayerType {
     uid: string;
     name: string;
     role: Role;
+}
+
+export interface RoomState {
+    opts: { [opt: string]: boolean };
+    players: RoomPlayer;
+}
+
+export interface RoomPlayer {
+    [uid: string]: string;
 }
 
 export interface GameStateType {
