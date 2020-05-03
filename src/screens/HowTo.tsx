@@ -54,11 +54,15 @@ const HowTo = (props: Props & RouteComponentProps) => {
             <Text>
                 A single game consists of five sequential quests. Each quest
                 requires a specific number of players, dependent on the number
-                of players in a game. On a player's turn, they nominate the
-                appropriate number of players to go on the current quest. All
-                players then <Text variant="bold">publicly</Text> vote "yea" or
-                "nay". If a majority (>50%) of players vote "yea", the quest is
-                accepted and the nominated players go on the quest.
+                of players in a game. On a player's turn, they are the quest
+                leader and they nominate the appropriate number of players to go
+                on the current quest. All players then{' '}
+                <Text variant="bold">publicly</Text> vote "yea" or "nay". If a
+                majority (>50%) of players vote "yea", the quest proposal is
+                accepted and the nominated players go on the quest. If a quest
+                proposal is rejected, it is the next player's turn to be quest
+                leader. If five quest proposals are rejected in a row, 💀 evil
+                wins a quest automatically.
             </Text>
             <Text sx={{ mt: 3 }}>
                 Once on a quest, players <Text variant="bold">secretly</Text>{' '}
@@ -72,10 +76,11 @@ const HowTo = (props: Props & RouteComponentProps) => {
             <Text sx={{ mt: 3 }}>
                 If the agents of 💀 evil win three quests, the game ends and 💀
                 evil wins. If the defenders of 🏰 good win three quests, they
-                have not yet won - the Assassin has a chance to guess which
-                player is Merlin. If the Assassin guesses correctly, Merlin is
-                assassinated and 💀 evil wins. If the Assassin guesses
-                incorrectly, Merlin is unharmed and 🏰 good wins.
+                have not yet won - the Assassin has a chance to discuss with
+                other evil players and guess which good player is Merlin. If the
+                Assassin guesses correctly, Merlin is assassinated and 💀 evil
+                wins. If the Assassin guesses incorrectly, Merlin is unharmed
+                and 🏰 good wins.
             </Text>
             <Heading variant="sub2">Notes</Heading>
             <Text>
