@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Box, Text, Button, Flex, Checkbox, Label } from 'theme-ui';
+import { Box, Text, Button, Flex, Checkbox, Label, Grid } from 'theme-ui';
 
 import { leaveRoom } from '../store/room/actions';
 import { joinGame } from '../store/game/actions';
@@ -23,10 +23,40 @@ const Lobby = (props: LobbyProps) => {
         name: '',
         uid: '',
     });
-    const [percivalMorgana, setPercivalMorgana] = useState<boolean>(false);
+    const [canStart, setCanStart] = useState(true);
+    const [percival, setPercival] = useState<boolean>(false);
+    const [morgana, setMorgana] = useState<boolean>(false);
     const [oberon, setOberon] = useState<boolean>(false);
     const [mordred, setMordred] = useState<boolean>(false);
     const [userList, setUserList] = useState<Array<string>>([]);
+    const [warningMessage, setWarningMessage] = useState('');
+    useEffect(() => {
+        const numPlayers = userList.length;
+        const evil = Number(morgana) + Number(mordred) + Number(oberon);
+        if (numPlayers < 5) {
+            setWarningMessage('Need at least five players to start the game');
+            setCanStart(false);
+            return;
+        }
+        if (numPlayers > 10) {
+            setWarningMessage('Cannot have more than ten players in a game');
+            setCanStart(false);
+            return;
+        }
+        if (!percival && morgana) {
+            setWarningMessage(
+                'Morgana will have no effect if Percival is not in the game',
+            );
+            return;
+        }
+        if ((numPlayers < 7 && evil > 1) || (numPlayers < 10 && evil > 2)) {
+            setWarningMessage('Too many evil roles');
+            setCanStart(false);
+            return;
+        }
+        setWarningMessage('');
+        setCanStart(true);
+    }, [percival, morgana, oberon, mordred, userList.length]);
 
     useEffect(() => {
         if (roomId == null) return;
@@ -63,20 +93,13 @@ const Lobby = (props: LobbyProps) => {
                     setHost({ uid: hostUid, name });
                 });
         });
+
         roomRef.child('opts').on('value', (snap) => {
             const opts = snap.val();
             if (opts == null) return;
-            if (opts.percivalMorgana != null)
-                setPercivalMorgana(opts.percivalMorgana);
-        });
-        roomRef.child('opts').on('value', (snap) => {
-            const opts = snap.val();
-            if (opts == null) return;
+            if (opts.percival != null) setPercival(opts.percival);
+            if (opts.morgana != null) setMorgana(opts.morgana);
             if (opts.oberon != null) setOberon(opts.oberon);
-        });
-        roomRef.child('opts').on('value', (snap) => {
-            const opts = snap.val();
-            if (opts == null) return;
             if (opts.mordred != null) setMordred(opts.mordred);
         });
     }, [roomId, joinGame]);
@@ -100,30 +123,13 @@ const Lobby = (props: LobbyProps) => {
     const handleCreateGame = async () => {
         await dbCreateGame(roomId);
     };
-
-    const togglePM = (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
+    const toggle = (
+        e: React.MouseEvent<HTMLInputElement, MouseEvent>,
+        opt: string,
+    ) => {
+        setWarningMessage('');
         const target = e.target as HTMLInputElement;
-        db.ref(`rooms/${roomId}/opts/percivalMorgana`)
-            .set(target.checked)
-            .catch((err) => {
-                // eslint-disable-next-line no-console
-                console.log(err);
-            });
-    };
-
-    const toggleO = (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
-        const target = e.target as HTMLInputElement;
-        db.ref(`rooms/${roomId}/opts/oberon`)
-            .set(target.checked)
-            .catch((err) => {
-                // eslint-disable-next-line no-console
-                console.log(err);
-            });
-    };
-
-    const toggleM = (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
-        const target = e.target as HTMLInputElement;
-        db.ref(`rooms/${roomId}/opts/mordred`)
+        db.ref(`rooms/${roomId}/opts/${opt}`)
             .set(target.checked)
             .catch((err) => {
                 // eslint-disable-next-line no-console
@@ -134,7 +140,7 @@ const Lobby = (props: LobbyProps) => {
     const isHost = host.uid === uid;
     return (
         <Box>
-            <Flex>
+            <Grid sx={{ gridTemplateColumns: '150px 150px' }}>
                 <Box sx={{ pr: 2 }}>
                     <Button
                         onClick={() => {
@@ -153,46 +159,62 @@ const Lobby = (props: LobbyProps) => {
                     </Flex>
                     {isHost && (
                         <Flex sx={{ flexDirection: 'row' }}>
-                            <Button onClick={handleCreateGame}>
+                            <Button
+                                onClick={handleCreateGame}
+                                disabled={!canStart}
+                                variant={canStart ? 'primary' : 'disabled'}>
                                 Start Game
                             </Button>
                         </Flex>
                     )}
                     <Button onClick={handleLeaveRoom}>Leave Room</Button>
                 </Box>
-                <Box>
+                <Box sx={{ height: '150px' }}>
                     <Label>
                         <Checkbox
                             onClick={(e) => {
-                                if (isHost) togglePM(e);
+                                if (isHost) toggle(e, 'percival');
                             }}
                             onChange={() => {}}
-                            checked={percivalMorgana}
+                            checked={percival}
                         />
-                        Percival and Morgana
+                        Percival 🏰
                     </Label>
                     <Label>
                         <Checkbox
                             onClick={(e) => {
-                                if (isHost) toggleO(e);
+                                if (isHost) toggle(e, 'morgana');
+                            }}
+                            onChange={() => {}}
+                            checked={morgana}
+                        />
+                        Morgana 💀
+                    </Label>
+                    <Label>
+                        <Checkbox
+                            onClick={(e) => {
+                                if (isHost) toggle(e, 'oberon');
                             }}
                             onChange={() => {}}
                             checked={oberon}
                         />
-                        Oberon
+                        Oberon 💀
                     </Label>
                     <Label>
                         <Checkbox
                             onClick={(e) => {
-                                if (isHost) toggleM(e);
+                                if (isHost) toggle(e, 'mordred');
                             }}
                             onChange={() => {}}
                             checked={mordred}
                         />
-                        Mordred
+                        Mordred 💀
                     </Label>
+                    <Text variant="disclaimer" sx={{ fontSize: '14px', mt: 2 }}>
+                        {warningMessage}
+                    </Text>
                 </Box>
-            </Flex>
+            </Grid>
         </Box>
     );
 };

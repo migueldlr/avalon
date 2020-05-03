@@ -7,9 +7,10 @@ const db = admin.database();
 
 const getRoles = (
     n: number,
-    percivalMorgana: boolean,
+    percival: boolean,
+    morgana: boolean,
     oberon: boolean,
-    mordred: boolean
+    mordred: boolean,
 ): string[] => {
     const goodBadMap: Record<number, number[]> = {
         5: [3, 2],
@@ -28,9 +29,11 @@ const getRoles = (
 
     // this is kind of like a hierarchy of assigning people,
     // if they don't fit in the array, they aren't played
-    if (percivalMorgana) {
+    if (percival) {
         const percivalIdx = good.findIndex((str) => str === 'good');
         if (percivalIdx !== -1) good[percivalIdx] = 'percival';
+    }
+    if (morgana) {
         const morganaIdx = bad.findIndex((str) => str === 'bad');
         if (morganaIdx !== -1) bad[morganaIdx] = 'morgana';
     }
@@ -108,7 +111,7 @@ const updateGame = (
     gameState: GameStateType,
     gameIn: GameInType,
     dbRef: admin.database.Reference,
-    gameId: string
+    gameId: string,
 ): Promise<any> | null => {
     console.log('hot reloading!');
     const gameRef = dbRef.child(`games/${gameId}`);
@@ -135,13 +138,13 @@ const updateGame = (
     } else if (
         gameState.phase === 'voteTeam' &&
         Object.values(
-            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote]
+            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote],
         ).length === gameState.numPlayers
     ) {
         console.log(2);
 
         const yeas = Object.values(
-            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote]
+            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote],
         ).filter((v) => v).length;
         if (yeas > 0.5 * gameState.numPlayers) {
             return gameInRef.update({ questVote: [] }).then(() => {
@@ -275,13 +278,14 @@ export const createGame = functions.https.onCall(async (data, context) => {
     if (numPlayers > 10 || numPlayers < 5)
         throw new functions.https.HttpsError(
             'invalid-argument',
-            'Number of players must be between 5 and 10'
+            'Number of players must be between 5 and 10',
         );
     const roles = getRoles(
         numPlayers,
-        roomData.opts?.percivalMorgana ?? false,
+        roomData.opts?.percival ?? false,
+        roomData.opts?.morgana ?? false,
         roomData.opts?.oberon ?? false,
-        roomData.opts?.mordred ?? false
+        roomData.opts?.mordred ?? false,
     );
     const players = Object.entries(roomData.players).map(([uid, name], i) => ({
         uid,
