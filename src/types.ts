@@ -4,7 +4,9 @@ export type Role =
     | 'merlin'
     | 'assassin'
     | 'morgana'
-    | 'percival';
+    | 'percival'
+    | 'oberon'
+    | 'mordred';
 
 export interface PlayerType {
     uid: string;

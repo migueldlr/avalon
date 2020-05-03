@@ -5,7 +5,12 @@ import { shuffle } from './util';
 admin.initializeApp();
 const db = admin.database();
 
-const getRoles = (n: number, percivalMorgana: boolean): string[] => {
+const getRoles = (
+    n: number,
+    percivalMorgana: boolean,
+    oberon: boolean,
+    mordred: boolean
+): string[] => {
     const goodBadMap: Record<number, number[]> = {
         5: [3, 2],
         6: [4, 2],
@@ -15,13 +20,27 @@ const getRoles = (n: number, percivalMorgana: boolean): string[] => {
         10: [6, 4],
     };
     const goodBad = goodBadMap[n];
+    // these characters always happen
     const good = new Array(goodBad[0]).fill('good');
     good[0] = 'merlin';
     const bad = new Array(goodBad[1]).fill('bad');
     bad[0] = 'assassin';
+
+    // this is kind of like a hierarchy of assigning people,
+    // if they don't fit in the array, they aren't played
     if (percivalMorgana) {
-        good[1] = 'percival';
-        bad[1] = 'morgana';
+        const percivalIdx = good.findIndex((str) => str === 'good');
+        if (percivalIdx !== -1) good[percivalIdx] = 'percival';
+        const morganaIdx = bad.findIndex((str) => str === 'bad');
+        if (morganaIdx !== -1) bad[morganaIdx] = 'morgana';
+    }
+    if (oberon) {
+        const oberonIdx = bad.findIndex((str) => str === 'bad');
+        if (oberonIdx !== -1) bad[oberonIdx] = 'oberon';
+    }
+    if (mordred) {
+        const mordredIdx = bad.findIndex((str) => str === 'bad');
+        if (mordredIdx !== -1) bad[mordredIdx] = 'mordred';
     }
     const roles = shuffle(good.concat(bad));
     return roles;
@@ -89,7 +108,7 @@ const updateGame = (
     gameState: GameStateType,
     gameIn: GameInType,
     dbRef: admin.database.Reference,
-    gameId: string,
+    gameId: string
 ): Promise<any> | null => {
     console.log('hot reloading!');
     const gameRef = dbRef.child(`games/${gameId}`);
@@ -116,13 +135,13 @@ const updateGame = (
     } else if (
         gameState.phase === 'voteTeam' &&
         Object.values(
-            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote],
+            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote]
         ).length === gameState.numPlayers
     ) {
         console.log(2);
 
         const yeas = Object.values(
-            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote],
+            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote]
         ).filter((v) => v).length;
         if (yeas > 0.5 * gameState.numPlayers) {
             return gameInRef.update({ questVote: [] }).then(() => {
@@ -256,9 +275,14 @@ export const createGame = functions.https.onCall(async (data, context) => {
     if (numPlayers > 10 || numPlayers < 5)
         throw new functions.https.HttpsError(
             'invalid-argument',
-            'Number of players must be between 5 and 10',
+            'Number of players must be between 5 and 10'
         );
-    const roles = getRoles(numPlayers, roomData.opts?.percivalMorgana ?? false);
+    const roles = getRoles(
+        numPlayers,
+        roomData.opts?.percivalMorgana ?? false,
+        roomData.opts?.oberon ?? false,
+        roomData.opts?.mordred ?? false
+    );
     const players = Object.entries(roomData.players).map(([uid, name], i) => ({
         uid,
         name,
