@@ -94,6 +94,9 @@ const Home = (props: HomeProps) => {
                     Join Room
                 </Button>
                 <Text sx={{ height: '1em' }}>{message}</Text>
+                <Button sx={{ width: '100%' }} variant="alt">
+                    How To Play
+                </Button>
             </Box>
             <Box sx={{ mt: '45vh', position: 'absolute', textAlign: 'center' }}>
                 <Text variant="disclaimer">

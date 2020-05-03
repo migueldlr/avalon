@@ -19,6 +19,8 @@ export default {
                     disabled: '#6B3F69',
                     hover: '#5C2C5A',
                     selected: '#2B0F2A',
+                    alt: '#6B3F69',
+                    altbg: 'rgba(0, 0, 0, 0.2)',
                 },
                 checkbox: '#c5c8c6',
                 outline: '#8c8c8c',
@@ -46,7 +48,8 @@ export default {
             hover: '#8b53bc',
             // selected:
             disabled: '#734F8F',
-            // primary:
+            alt: '#4a266a',
+            altbg: 'transparent',
         },
         disabled: 'rgba(255,255,255,0.7)',
     },
@@ -97,6 +100,15 @@ export default {
                 bg: 'button.hover',
                 outline: 'none',
             },
+        },
+        alt: {
+            transition: buttonTransition,
+            fontFamily: 'heading',
+            bg: 'button.altbg',
+            color: 'button.alt',
+            border: 'solid black 1px',
+            borderColor: 'button.alt',
+            borderWidth: 1,
         },
         disabled: {
             transition: buttonTransition,
