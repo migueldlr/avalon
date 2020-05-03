@@ -13,6 +13,22 @@ export const getThisPlayer = (gameState: GameStateType) => {
     return gameState.players.find((p) => p.uid === uid);
 };
 
+// this is merlin's version so it includes oberon
+export const isBadForMerlin = (role: Role) => {
+    return (
+        role === 'assassin' ||
+        role === 'bad' ||
+        role === 'morgana' ||
+        role === 'oberon'
+    );
+};
+
+// this is the normal one for the other characters besides merlin to use
 export const isBad = (role: Role) => {
-    return role === 'assassin' || role === 'bad' || role === 'morgana';
+    return (
+        role === 'assassin' ||
+        role === 'bad' ||
+        role === 'morgana' ||
+        role === 'mordred'
+    );
 };
