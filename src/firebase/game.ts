@@ -2,11 +2,9 @@ import { functions } from './index';
 import { db, auth } from './index';
 import { GameStateType } from '../types';
 
-export const dbCreateGame = async (roomId: string): Promise<string | null> => {
+export const dbCreateGame = async (roomId: string) => {
     try {
-        const res = await functions.httpsCallable('createGame')({ roomId });
-        const { gameId } = res.data;
-        return gameId;
+        await functions.httpsCallable('createGame')({ roomId });
     } catch (err) {
         // eslint-disable-next-line no-console
         console.log(err);

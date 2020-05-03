@@ -17,6 +17,7 @@ import { ReactComponent as SunIcon } from '../img/brightness.svg';
 
 import githubIcon from '../img/github.png';
 import githubIconLight from '../img/githublight.png';
+import { navigate } from '@reach/router';
 
 interface HomeProps {
     joinRoom: typeof joinRoom;
@@ -94,6 +95,12 @@ const Home = (props: HomeProps) => {
                     Join Room
                 </Button>
                 <Text sx={{ height: '1em' }}>{message}</Text>
+                <Button
+                    sx={{ width: '100%' }}
+                    variant="alt"
+                    onClick={() => navigate('howto')}>
+                    How To Play
+                </Button>
             </Box>
             <Box sx={{ mt: '45vh', position: 'absolute', textAlign: 'center' }}>
                 <Text variant="disclaimer">

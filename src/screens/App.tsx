@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Flex } from 'theme-ui';
+import { RouteComponentProps, Router } from '@reach/router';
 
 import { auth } from '../firebase/index';
 import { establishPresence } from '../firebase/presence';
@@ -12,12 +13,30 @@ import Home from './Home';
 import Lobby from './Lobby';
 import Game from './Game';
 import { dbRejoinGame } from '../firebase/game';
+import HowTo from './HowTo';
 
 interface AppProps {
     roomId: string | null;
     inGame?: boolean;
     joinGame: typeof joinGame;
 }
+
+const DefaultScreen = (
+    props: { inGame?: boolean; roomId: string | null } & RouteComponentProps,
+) => {
+    const { inGame, roomId } = props;
+    return (
+        <Flex
+            sx={{
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: '100vh',
+            }}>
+            {inGame ? <Game /> : roomId ? <Lobby /> : <Home />}
+        </Flex>
+    );
+};
 
 const App: React.FC<AppProps> = ({ roomId, inGame, joinGame }) => {
     useEffect(() => {
@@ -42,15 +61,10 @@ const App: React.FC<AppProps> = ({ roomId, inGame, joinGame }) => {
     }, [joinGame]);
 
     return (
-        <Flex
-            sx={{
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '100vh',
-            }}>
-            {inGame ? <Game /> : roomId ? <Lobby /> : <Home />}
-        </Flex>
+        <Router>
+            <DefaultScreen inGame={inGame} roomId={roomId} path="/" />
+            <HowTo path="/howto" />
+        </Router>
     );
 };
 

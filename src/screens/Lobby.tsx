@@ -98,9 +98,7 @@ const Lobby = (props: LobbyProps) => {
     };
 
     const handleCreateGame = async () => {
-        const gameId = await dbCreateGame(roomId);
-        if (gameId == null) return;
-        props.joinGame(gameId);
+        await dbCreateGame(roomId);
     };
 
     const togglePM = (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
