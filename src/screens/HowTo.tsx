@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/accessible-emoji */
 import React from 'react';
 import { Button, Text, Flex, Heading, Divider } from 'theme-ui';
 import { RouteComponentProps, navigate } from '@reach/router';
