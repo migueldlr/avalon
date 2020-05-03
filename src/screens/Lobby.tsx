@@ -43,15 +43,15 @@ const Lobby = (props: LobbyProps) => {
             setCanStart(false);
             return;
         }
+        if ((numPlayers < 7 && evil > 1) || (numPlayers < 10 && evil > 2)) {
+            setWarningMessage('Too many evil roles');
+            setCanStart(false);
+            return;
+        }
         if (!percival && morgana) {
             setWarningMessage(
                 'Morgana will have no effect if Percival is not in the game',
             );
-            return;
-        }
-        if ((numPlayers < 7 && evil > 1) || (numPlayers < 10 && evil > 2)) {
-            setWarningMessage('Too many evil roles');
-            setCanStart(false);
             return;
         }
         setWarningMessage('');

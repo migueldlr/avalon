@@ -78,13 +78,21 @@ const AssignRole = (props: AssignRoleProps) => {
                             Mordred: {listify(merlinBaddies)}
                         </Text>
                     )}
-                    {thisPlayer.role === 'percival' && (
-                        <Text>
-                            Your holy powers reveal Merlin to be:{' '}
-                            {merlinMorgana[0 + first]} or{' '}
-                            {merlinMorgana[1 - first]}
-                        </Text>
-                    )}
+                    {thisPlayer.role === 'percival' &&
+                        merlinMorgana.length > 1 && (
+                            <Text>
+                                Your holy powers reveal Merlin to be:{' '}
+                                {merlinMorgana[0 + first]} or{' '}
+                                {merlinMorgana[1 - first]}
+                            </Text>
+                        )}
+                    {thisPlayer.role === 'percival' &&
+                        merlinMorgana.length === 1 && (
+                            <Text>
+                                Your holy powers reveal Merlin to be:{' '}
+                                {merlinMorgana[0]}
+                            </Text>
+                        )}
                 </>
             )}
             {canClick && (
