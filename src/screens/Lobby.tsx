@@ -24,6 +24,7 @@ const Lobby = (props: LobbyProps) => {
         uid: '',
     });
     const [percivalMorgana, setPercivalMorgana] = useState<boolean>(false);
+    const [oberon, setOberon] = useState<boolean>(false);
     const [userList, setUserList] = useState<Array<string>>([]);
 
     useEffect(() => {
@@ -67,6 +68,11 @@ const Lobby = (props: LobbyProps) => {
             if (opts.percivalMorgana != null)
                 setPercivalMorgana(opts.percivalMorgana);
         });
+        roomRef.child('opts').on('value', (snap) => {
+            const opts = snap.val();
+            if (opts == null) return;
+            if (opts.oberon != null) setOberon(opts.oberon);
+        });
     }, [roomId, joinGame]);
     if (roomId == null)
         return (
@@ -94,6 +100,16 @@ const Lobby = (props: LobbyProps) => {
     const togglePM = (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
         const target = e.target as HTMLInputElement;
         db.ref(`rooms/${roomId}/opts/percivalMorgana`)
+            .set(target.checked)
+            .catch((err) => {
+                // eslint-disable-next-line no-console
+                console.log(err);
+            });
+    };
+
+    const toggleO = (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
+        const target = e.target as HTMLInputElement;
+        db.ref(`rooms/${roomId}/opts/oberon`)
             .set(target.checked)
             .catch((err) => {
                 // eslint-disable-next-line no-console
@@ -139,6 +155,16 @@ const Lobby = (props: LobbyProps) => {
                             checked={percivalMorgana}
                         />
                         Percival and Morgana
+                    </Label>
+                    <Label>
+                        <Checkbox
+                            onClick={(e) => {
+                                if (isHost) toggleO(e);
+                            }}
+                            onChange={() => {}}
+                            checked={oberon}
+                        />
+                        Oberon
                     </Label>
                 </Box>
             </Flex>

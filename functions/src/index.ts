@@ -5,7 +5,22 @@ import { shuffle } from './util';
 admin.initializeApp();
 const db = admin.database();
 
-const getRoles = (n: number, percivalMorgana: boolean): string[] => {
+const getRoles = (
+    n: number,
+    percivalMorgana: boolean,
+    oberon: boolean
+): string[] => {
+    // helper function to get the next index in the array for a named character
+    // makes the assumption the assassin and merlin are in index 0 for their respective arrays
+    const findNextAvailableIdx = (baseVal: string, inArr: Array<string>) => {
+        let i: number = 0;
+        while (i < inArr.length && inArr[i] !== baseVal) {
+            i += 1;
+        }
+        // either return the next available idx or -1 if arr is full
+        return i !== inArr.length ? i : -1;
+    };
+
     const goodBadMap: Record<number, number[]> = {
         5: [3, 2],
         6: [4, 2],
@@ -15,13 +30,23 @@ const getRoles = (n: number, percivalMorgana: boolean): string[] => {
         10: [6, 4],
     };
     const goodBad = goodBadMap[n];
+    // these characters always happen
     const good = new Array(goodBad[0]).fill('good');
     good[0] = 'merlin';
     const bad = new Array(goodBad[1]).fill('bad');
     bad[0] = 'assassin';
+
+    // this is kind of like a hierarchy of assigning people,
+    // if they don't fit in the array, they aren't played
     if (percivalMorgana) {
-        good[1] = 'percival';
-        bad[1] = 'morgana';
+        const percivalIdx = findNextAvailableIdx('good', good);
+        if (percivalIdx !== -1) good[percivalIdx] = 'percival';
+        const morganaIdx = findNextAvailableIdx('bad', bad);
+        if (morganaIdx !== -1) bad[morganaIdx] = 'morgana';
+    }
+    if (oberon) {
+        const oberonIdx = findNextAvailableIdx('bad', bad);
+        if (oberonIdx !== -1) bad[oberonIdx] = 'oberon';
     }
     const roles = shuffle(good.concat(bad));
     return roles;
@@ -89,7 +114,7 @@ const updateGame = (
     gameState: GameStateType,
     gameIn: GameInType,
     dbRef: admin.database.Reference,
-    gameId: string,
+    gameId: string
 ): Promise<any> | null => {
     console.log('hot reloading!');
     const gameRef = dbRef.child(`games/${gameId}`);
@@ -116,13 +141,13 @@ const updateGame = (
     } else if (
         gameState.phase === 'voteTeam' &&
         Object.values(
-            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote],
+            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote]
         ).length === gameState.numPlayers
     ) {
         console.log(2);
 
         const yeas = Object.values(
-            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote],
+            gameIn.teamVote[gameState.currentQuest][gameState.currentTeamVote]
         ).filter((v) => v).length;
         if (yeas > 0.5 * gameState.numPlayers) {
             return gameInRef.update({ questVote: [] }).then(() => {
@@ -256,9 +281,13 @@ export const createGame = functions.https.onCall(async (data, context) => {
     if (numPlayers > 10 || numPlayers < 5)
         throw new functions.https.HttpsError(
             'invalid-argument',
-            'Number of players must be between 5 and 10',
+            'Number of players must be between 5 and 10'
         );
-    const roles = getRoles(numPlayers, roomData.opts?.percivalMorgana ?? false);
+    const roles = getRoles(
+        numPlayers,
+        roomData.opts?.percivalMorgana ?? false,
+        roomData.opts?.oberon ?? false
+    );
     const players = Object.entries(roomData.players).map(([uid, name], i) => ({
         uid,
         name,
