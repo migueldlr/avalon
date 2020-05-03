@@ -25,6 +25,7 @@ const Lobby = (props: LobbyProps) => {
     });
     const [percivalMorgana, setPercivalMorgana] = useState<boolean>(false);
     const [oberon, setOberon] = useState<boolean>(false);
+    const [mordred, setMordred] = useState<boolean>(false);
     const [userList, setUserList] = useState<Array<string>>([]);
 
     useEffect(() => {
@@ -73,6 +74,11 @@ const Lobby = (props: LobbyProps) => {
             if (opts == null) return;
             if (opts.oberon != null) setOberon(opts.oberon);
         });
+        roomRef.child('opts').on('value', (snap) => {
+            const opts = snap.val();
+            if (opts == null) return;
+            if (opts.mordred != null) setMordred(opts.mordred);
+        });
     }, [roomId, joinGame]);
     if (roomId == null)
         return (
@@ -116,6 +122,17 @@ const Lobby = (props: LobbyProps) => {
                 console.log(err);
             });
     };
+
+    const toggleM = (e: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
+        const target = e.target as HTMLInputElement;
+        db.ref(`rooms/${roomId}/opts/mordred`)
+            .set(target.checked)
+            .catch((err) => {
+                // eslint-disable-next-line no-console
+                console.log(err);
+            });
+    };
+
     const isHost = host.uid === uid;
     return (
         <Box>
@@ -165,6 +182,16 @@ const Lobby = (props: LobbyProps) => {
                             checked={oberon}
                         />
                         Oberon
+                    </Label>
+                    <Label>
+                        <Checkbox
+                            onClick={(e) => {
+                                if (isHost) toggleM(e);
+                            }}
+                            onChange={() => {}}
+                            checked={mordred}
+                        />
+                        Mordred
                     </Label>
                 </Box>
             </Flex>

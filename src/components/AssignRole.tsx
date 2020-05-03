@@ -20,6 +20,7 @@ const roleText: Record<Role, string> = {
     assassin: 'the vicious Assassin 💀',
     morgana: 'the sinister Morgana 💀',
     oberon: 'the unknown Oberon 💀',
+    mordred: 'the evil ruler Mordred 💀',
 };
 
 // this is merlin's version so it includes oberon
@@ -34,7 +35,12 @@ const isBadForMerlin = (role: Role) => {
 
 // this is the normal one for the other characters besides merlin to use
 const isBad = (role: Role) => {
-    return role === 'assassin' || role === 'bad' || role === 'morgana';
+    return (
+        role === 'assassin' ||
+        role === 'bad' ||
+        role === 'morgana' ||
+        role === 'mordred'
+    );
 };
 
 const AssignRole = (props: AssignRoleProps) => {

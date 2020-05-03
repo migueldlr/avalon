@@ -8,19 +8,9 @@ const db = admin.database();
 const getRoles = (
     n: number,
     percivalMorgana: boolean,
-    oberon: boolean
+    oberon: boolean,
+    mordred: boolean
 ): string[] => {
-    // helper function to get the next index in the array for a named character
-    // makes the assumption the assassin and merlin are in index 0 for their respective arrays
-    const findNextAvailableIdx = (baseVal: string, inArr: Array<string>) => {
-        let i: number = 0;
-        while (i < inArr.length && inArr[i] !== baseVal) {
-            i += 1;
-        }
-        // either return the next available idx or -1 if arr is full
-        return i !== inArr.length ? i : -1;
-    };
-
     const goodBadMap: Record<number, number[]> = {
         5: [3, 2],
         6: [4, 2],
@@ -39,14 +29,18 @@ const getRoles = (
     // this is kind of like a hierarchy of assigning people,
     // if they don't fit in the array, they aren't played
     if (percivalMorgana) {
-        const percivalIdx = findNextAvailableIdx('good', good);
+        const percivalIdx = good.findIndex((str) => str === 'good');
         if (percivalIdx !== -1) good[percivalIdx] = 'percival';
-        const morganaIdx = findNextAvailableIdx('bad', bad);
+        const morganaIdx = bad.findIndex((str) => str === 'bad');
         if (morganaIdx !== -1) bad[morganaIdx] = 'morgana';
     }
     if (oberon) {
-        const oberonIdx = findNextAvailableIdx('bad', bad);
+        const oberonIdx = bad.findIndex((str) => str === 'bad');
         if (oberonIdx !== -1) bad[oberonIdx] = 'oberon';
+    }
+    if (mordred) {
+        const mordredIdx = bad.findIndex((str) => str === 'bad');
+        if (mordredIdx !== -1) bad[mordredIdx] = 'mordred';
     }
     const roles = shuffle(good.concat(bad));
     return roles;
@@ -286,7 +280,8 @@ export const createGame = functions.https.onCall(async (data, context) => {
     const roles = getRoles(
         numPlayers,
         roomData.opts?.percivalMorgana ?? false,
-        roomData.opts?.oberon ?? false
+        roomData.opts?.oberon ?? false,
+        roomData.opts?.mordred ?? false
     );
     const players = Object.entries(roomData.players).map(([uid, name], i) => ({
         uid,
