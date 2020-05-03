@@ -1,9 +1,11 @@
 const buttonTransition = 'color 0.2s, background-color 0.2s';
 
 export default {
-    breakpoints: ['40em', '52em', '64em'],
+    breakpoints: ['40em', '52em', '65em', '90em'],
     fontSizes: [12, 14, 16, 20, 24, 32, 48, 64],
     sizes: [1, 2, 4, 16, 24, 40, 64, 104],
+    // space: [0, 2, 4, 16, 24, 40, 64, 104, 168, 272, 440, 720, 1152, 1920],
+    space: [0, 4, 8, 16, 32, 64, 128, 256],
     colors: {
         modes: {
             dark: {
@@ -53,7 +55,6 @@ export default {
         },
         disabled: 'rgba(255,255,255,0.7)',
     },
-    space: [0, 4, 8, 16, 32, 64, 128, 256],
     fonts: {
         body: 'Merriweather, serif',
         heading: 'Cinzel Decorative , serif',
@@ -78,6 +79,26 @@ export default {
         heading: {
             fontSize: [5, 6, 7],
             color: 'heading',
+        },
+        fancy: {
+            display: 'inline',
+            fontFamily: 'heading',
+            fontWeight: '700',
+            color: 'heading',
+        },
+        bold: {
+            display: 'inline',
+            fontWeight: '700',
+        },
+
+        sub: {
+            fontSize: [4, 5, 6],
+            // color: 'heading',
+        },
+        sub2: {
+            fontSize: [3, 4, 5],
+            pt: 3,
+            // color: 'heading',
         },
     },
     styles: {
