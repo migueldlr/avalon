@@ -13,7 +13,7 @@ interface AssignRoleProps {
 }
 
 const roleText: Record<Role, string> = {
-    good: 'a loyal servant of Arthur 🏰',
+    good: 'a knight of Arthur 🏰',
     merlin: 'the wise wizard Merlin 🏰',
     percival: 'the brave Percival 🏰',
     bad: 'an evil minion of Mordred 💀',

@@ -41,7 +41,10 @@ const PickTeam = (props: PickTeamProps) => {
     if (gameState.players[gameState.order[gameState.currentTurn]].uid === uid) {
         return (
             <>
-                <Text>Who will go on this quest?</Text>
+                <Text>
+                    Who will go on this quest? Pick{' '}
+                    {gameState.quests[gameState.currentQuest]}
+                </Text>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     {gameState.order.map((i) => {
                         const p = gameState.players[i];

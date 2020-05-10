@@ -28,8 +28,8 @@ const HowTo = (props: Props & RouteComponentProps) => {
             <Text>
                 Each player has a main allegiance: they are either a defender of
                 🏰 good or an agent of 💀 evil. Each player may also have a
-                specific role, which affects gameplay in various ways. Before
-                the game begins, players are given their allegiance and role. In
+                unique role, which affects gameplay in various ways. Before the
+                game begins, players are given their allegiance and role. In
                 addition, all evil players are given the names (but not roles)
                 of the other evil players.
             </Text>
@@ -39,6 +39,10 @@ const HowTo = (props: Props & RouteComponentProps) => {
                     <li>Merlin - knows which players are evil</li>
                     <li>Percival - knows the identity of Merlin</li>
                 </ul>
+                Players that are defenders of 🏰 good but do not have a role are
+                the knights of Arthur.
+            </Text>
+            <Text sx={{ mt: 3 }}>
                 The 💀 evil roles are:
                 <ul style={{ margin: '1em 0', marginBottom: 0 }}>
                     <li>
@@ -49,6 +53,8 @@ const HowTo = (props: Props & RouteComponentProps) => {
                     <li>Oberon - not revealed to other evil players</li>
                     <li>Mordred - not revealed to Merlin</li>
                 </ul>
+                Players that are agents of 💀 evil but do not have a role are
+                the minions of Mordred.
             </Text>
             <Heading variant="sub2">Gameplay</Heading>
             <Text>

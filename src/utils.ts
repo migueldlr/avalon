@@ -29,6 +29,18 @@ export const isBad = (role: Role) => {
         role === 'assassin' ||
         role === 'bad' ||
         role === 'morgana' ||
-        role === 'mordred'
+        role === 'mordred' ||
+        role === 'oberon'
     );
+};
+
+export const roleDisplay: Record<Role, string> = {
+    bad: 'minion',
+    good: 'knight',
+    merlin: 'Merlin',
+    assassin: 'Assassin',
+    morgana: 'Morgana',
+    percival: 'Percival',
+    oberon: 'Oberon',
+    mordred: 'Mordred',
 };
