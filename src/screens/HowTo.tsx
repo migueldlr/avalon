@@ -44,7 +44,7 @@ const HowTo = (props: Props & RouteComponentProps) => {
             </Text>
             <Text sx={{ mt: 3 }}>
                 The 💀 evil roles are:
-                <ul style={{ margin: '1em 0', marginBottom: 0 }}>
+                <ul style={{ margin: '1em 0' }}>
                     <li>
                         Assassin - attempts to assassinate Merlin at the end of
                         the game
