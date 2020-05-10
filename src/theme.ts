@@ -147,6 +147,9 @@ export default {
         },
     },
     forms: {
+        checkboxdisabled: {
+            'input:checked ~ &': { color: 'gray.8' },
+        },
         checkbox: {
             '&:focus': { outline: 'none' },
             'input:checked ~ &': { color: 'checkbox' },

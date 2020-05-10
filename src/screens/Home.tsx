@@ -33,13 +33,13 @@ const Home = (props: HomeProps) => {
     const handleCreate = async () => {
         const roomId = await dbCreateRoom(nameInput);
         if (roomId == null) return;
-        props.joinRoom(roomId);
+        props.joinRoom(roomId.toLowerCase());
     };
     const handleJoin = async () => {
-        const joined = await dbJoinRoom(nameInput, roomIdInput);
+        const joined = await dbJoinRoom(nameInput, roomIdInput.toLowerCase());
         switch (joined) {
             case RoomResponse.OK:
-                props.joinRoom(roomIdInput);
+                props.joinRoom(roomIdInput.toLowerCase());
                 break;
             case RoomResponse.ROOM_NOT_FOUND:
                 setMessage('Room not found!');
@@ -79,7 +79,9 @@ const Home = (props: HomeProps) => {
                     sx={{
                         borderColor: roomIdInput !== '' ? '' : 'outlinefocused',
                     }}
-                    onChange={(e) => setRoomIdInput(e.target.value)}
+                    onChange={(e) =>
+                        setRoomIdInput(e.target.value.toUpperCase())
+                    }
                     value={roomIdInput}
                     placeholder="Room Code"
                 />

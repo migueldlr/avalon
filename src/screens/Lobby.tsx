@@ -121,7 +121,7 @@ const Lobby = (props: LobbyProps) => {
     };
 
     const handleCreateGame = async () => {
-        await dbCreateGame(roomId);
+        await dbCreateGame(roomId.toLowerCase());
     };
     const toggle = (
         e: React.MouseEvent<HTMLInputElement, MouseEvent>,
@@ -146,10 +146,10 @@ const Lobby = (props: LobbyProps) => {
                         onClick={() => {
                             navigator.clipboard.writeText(roomId);
                         }}
-                        sx={{ fontFamily: 'body' }}>
+                        sx={{ fontFamily: 'body', textTransform: 'uppercase' }}>
                         {roomId}
                     </Button>
-                    <Flex sx={{ flexDirection: 'column' }}>
+                    <Flex sx={{ flexDirection: 'column', my: 2 }}>
                         {userList.map((uname) => (
                             <Text key={uname}>
                                 {host.name === uname ? '👑' : ''}
@@ -172,10 +172,28 @@ const Lobby = (props: LobbyProps) => {
                 <Box sx={{ height: '150px' }}>
                     <Label>
                         <Checkbox
+                            checked={true}
+                            variant="checkboxdisabled"
+                            disabled
+                        />
+                        Merlin 🏰
+                    </Label>
+                    <Label>
+                        <Checkbox
+                            checked={true}
+                            variant="checkboxdisabled"
+                            disabled
+                        />
+                        Assassin 💀
+                    </Label>
+                    <Label>
+                        <Checkbox
                             onClick={(e) => {
                                 if (isHost) toggle(e, 'percival');
                             }}
                             onChange={() => {}}
+                            variant={isHost ? undefined : 'checkboxdisabled'}
+                            disabled={isHost ? false : true}
                             checked={percival}
                         />
                         Percival 🏰
@@ -186,6 +204,8 @@ const Lobby = (props: LobbyProps) => {
                                 if (isHost) toggle(e, 'morgana');
                             }}
                             onChange={() => {}}
+                            variant={isHost ? undefined : 'checkboxdisabled'}
+                            disabled={isHost ? false : true}
                             checked={morgana}
                         />
                         Morgana 💀
@@ -196,6 +216,8 @@ const Lobby = (props: LobbyProps) => {
                                 if (isHost) toggle(e, 'oberon');
                             }}
                             onChange={() => {}}
+                            variant={isHost ? undefined : 'checkboxdisabled'}
+                            disabled={isHost ? false : true}
                             checked={oberon}
                         />
                         Oberon 💀
@@ -206,6 +228,8 @@ const Lobby = (props: LobbyProps) => {
                                 if (isHost) toggle(e, 'mordred');
                             }}
                             onChange={() => {}}
+                            variant={isHost ? undefined : 'checkboxdisabled'}
+                            disabled={isHost ? false : true}
                             checked={mordred}
                         />
                         Mordred 💀

@@ -10,7 +10,7 @@ export enum RoomResponse {
 
 export const dbCreateRoom = async (name: string) => {
     const uid = auth.currentUser?.uid;
-    const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 6);
+    const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz', 4);
     const roomId = nanoid();
     const roomRef = db.ref(`rooms/${roomId}/players/${uid}`);
     try {
@@ -35,6 +35,7 @@ export const dbJoinRoom = async (
 ): Promise<RoomResponse> => {
     const uid = auth.currentUser?.uid;
     const roomRef = db.ref(`rooms/${roomId}/players/${uid}`);
+    console.log(`rooms/${roomId}/players/${uid}`);
     try {
         const roomSnap: Array<{ name: string }> | null = (
             await db.ref(`rooms/${roomId}`).once('value')
