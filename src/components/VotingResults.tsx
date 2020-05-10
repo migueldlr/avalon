@@ -120,8 +120,10 @@ const MissionVote = (props: {
                             <Box key={j} id={`col${leader}`}>
                                 {order.map((i, l) => {
                                     const u = players[i].uid;
+                                    const display = questers[j].includes(u)
+                                        ? '🏹'
+                                        : '';
                                     return (
-                                        // eslint-disable-next-line jsx-a11y/accessible-emoji
                                         <Text
                                             key={i}
                                             sx={{
@@ -139,9 +141,7 @@ const MissionVote = (props: {
                                                         : '',
                                                 fontSize: [0, 1],
                                             }}>
-                                            {questers[j].includes(u)
-                                                ? '🏹'
-                                                : ''}
+                                            {display}
                                         </Text>
                                     );
                                 })}
