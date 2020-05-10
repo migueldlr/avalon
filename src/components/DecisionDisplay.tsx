@@ -55,7 +55,7 @@ const DecisionDisplay = (props: DecisionDisplayProps) => {
         <>
             {Array.isArray(gameState.questVote) && (
                 <>
-                    <Text>The mission results have arrived...</Text>
+                    <Text>The quest results have arrived...</Text>
                     <Text>{displayDecision.slice(0, displayN)}</Text>
                 </>
             )}
@@ -65,8 +65,8 @@ const DecisionDisplay = (props: DecisionDisplayProps) => {
             {displayRes && (
                 <Text>
                     {gameState.questResults[gameState.currentQuest]
-                        ? 'The mission succeeded!'
-                        : 'The mission failed'}
+                        ? 'The quest succeeded!'
+                        : 'The quest failed'}
                 </Text>
             )}
         </>

@@ -76,6 +76,9 @@ export default {
             color: 'gray.8',
             fontSize: '10px',
         },
+        legend: {
+            fontSize: 0,
+        },
         heading: {
             fontSize: [5, 6, 7],
             color: 'heading',

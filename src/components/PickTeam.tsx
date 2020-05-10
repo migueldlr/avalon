@@ -73,7 +73,7 @@ const PickTeam = (props: PickTeamProps) => {
     return (
         <Text>
             {gameState.players[gameState.order[gameState.currentTurn]].name} is
-            forming a questing team
+            choosing a questing team
         </Text>
     );
 };

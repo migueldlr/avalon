@@ -1,6 +1,9 @@
-import React from 'react';
+/* eslint-disable jsx-a11y/accessible-emoji */
+import React, { useState } from 'react';
 import { GameStateType, PlayerType } from '../types';
 import { Box, Flex, Text, Grid } from 'theme-ui';
+
+import PlayersDisplay from './PlayersDisplay';
 
 interface VotingResultsProps {
     gameState: GameStateType;
@@ -41,6 +44,34 @@ const PlayerDisplay = (props: {
                 );
             })}
         </Box>
+    );
+};
+
+const MissionLegend = () => {
+    return (
+        <Grid
+            gap={2}
+            sx={{
+                mt: 2,
+                gridTemplateColumns: 'repeat(8, auto)',
+                alignItems: 'center',
+            }}>
+            <Box
+                sx={{
+                    height: 3,
+                    width: 4,
+                    border: 'black solid 2px',
+                    borderColor: 'text',
+                }}
+            />
+            <Text variant="legend">quest leader</Text>
+            <Box sx={{ bg: 'yea', height: 3, width: 4 }} />
+            <Text variant="legend">yea</Text>
+            <Box sx={{ bg: 'nay', height: 3, width: 4 }} />
+            <Text variant="legend">nay</Text>
+            <Text variant="legend">🏹</Text>
+            <Text variant="legend">on quest</Text>
+        </Grid>
     );
 };
 
@@ -158,47 +189,63 @@ const MissionVote = (props: {
 
 const VotingResults = (props: VotingResultsProps) => {
     const { gameState } = props;
+    const [displayLegend, setDisplayLegend] = useState(true);
     let leader = 0;
     return (
-        <Grid
-            // columns={[1, gameState.currentTurn + 2]}
-            gap={2}
-            sx={{
-                gridTemplateColumns: [
-                    `1`,
-                    `repeat(${
-                        gameState.currentQuest +
-                        2 +
-                        (gameState.phase === 'voteQuest' ? 1 : 0)
-                    }, auto)`,
-                ],
-            }}>
-            <PlayerDisplay
-                order={gameState.order}
-                currentTurn={gameState.currentTurn}
-                phase={gameState.phase}
-                players={gameState.players}
-                novotes={!gameState.teamVote}
-            />
-            {gameState.teamVote &&
-                gameState.teamVote.map((votes, i) => {
-                    leader += votes.length;
-                    return (
-                        <MissionVote
-                            key={i}
-                            votes={votes}
-                            questers={gameState.proposed[i]}
-                            players={gameState.players}
-                            order={gameState.order}
-                            missionNum={i}
-                            leaderStart={leader - votes.length}
-                            questResults={gameState.questResults ?? []}
-                            currentTurn={gameState.currentTurn}
-                            phase={gameState.phase}
-                        />
-                    );
-                })}
-        </Grid>
+        <Flex sx={{ flexDirection: 'column', alignItems: 'center' }}>
+            <Grid
+                // columns={[1, gameState.currentTurn + 2]}
+                gap={2}
+                sx={{
+                    gridTemplateColumns: [
+                        `1`,
+                        `repeat(${
+                            gameState.currentQuest +
+                            2 +
+                            (gameState.phase === 'voteQuest' ? 1 : 0)
+                        }, auto)`,
+                    ],
+                    cursor: 'pointer',
+                }}
+                onClick={() => {
+                    setDisplayLegend(!displayLegend);
+                }}>
+                <PlayerDisplay
+                    order={gameState.order}
+                    currentTurn={gameState.currentTurn}
+                    phase={gameState.phase}
+                    players={gameState.players}
+                    novotes={!gameState.teamVote}
+                />
+                {gameState.teamVote &&
+                    gameState.teamVote.map((votes, i) => {
+                        leader += votes.length;
+                        return (
+                            <MissionVote
+                                key={i}
+                                votes={votes}
+                                questers={gameState.proposed[i]}
+                                players={gameState.players}
+                                order={gameState.order}
+                                missionNum={i}
+                                leaderStart={leader - votes.length}
+                                questResults={gameState.questResults ?? []}
+                                currentTurn={gameState.currentTurn}
+                                phase={gameState.phase}
+                            />
+                        );
+                    })}
+            </Grid>
+            <Box
+                sx={{
+                    maxHeight: displayLegend ? '80px' : '0',
+                    transition: 'max-height 0.5s linear',
+                    overflow: 'hidden',
+                }}>
+                <MissionLegend />
+                <PlayersDisplay gameState={gameState} />
+            </Box>
+        </Flex>
     );
 };
 
