@@ -42,8 +42,8 @@ const PickTeam = (props: PickTeamProps) => {
         return (
             <>
                 <Text>
-                    Who will go on this quest? Pick{' '}
-                    {gameState.quests[gameState.currentQuest]}
+                    Who will go on this quest? (Pick{' '}
+                    {gameState.quests[gameState.currentQuest]})
                 </Text>
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                     {gameState.order.map((i) => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db, auth } from '../firebase/index';
 import { Box, Text, Button } from 'theme-ui';
 import { connect } from 'react-redux';
@@ -25,6 +25,27 @@ const VoteTeam = (props: VoteTeamProps) => {
 
     const [voted, setVoted] = useState<boolean>(false);
     const [vote, setVote] = useState<boolean | null>(null);
+    const [waitFor, setWaitFor] = useState<string[]>([]);
+    useEffect(() => {
+        db.ref(
+            `gameIn/${gameId}/teamVote/${gameState.currentQuest}/${gameState.currentTeamVote}`,
+        ).on('value', (snap) => {
+            const snapVal: Record<string, boolean> = snap.val();
+
+            const voted = Object.keys(snapVal);
+
+            const waitFor = gameState.players
+                .filter((p) => !voted.includes(p.uid))
+                .map((p) => p.name);
+
+            setWaitFor(waitFor);
+        });
+    }, [
+        gameId,
+        gameState.currentQuest,
+        gameState.currentTeamVote,
+        gameState.players,
+    ]);
 
     const dbSetVote = (v: boolean) => {
         db.ref(
@@ -67,6 +88,11 @@ const VoteTeam = (props: VoteTeamProps) => {
                     Nay!
                 </Button>
             </Box>
+            {waitFor.length > 0 && (
+                <Text variant="disclaimer">
+                    Waiting on {listify(waitFor)}...
+                </Text>
+            )}
         </>
     );
 };

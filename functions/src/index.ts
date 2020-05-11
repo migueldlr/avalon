@@ -238,7 +238,7 @@ const updateGame = (
     } else if (gameState.phase === 'assassin' && gameIn.assassinPick) {
         if (
             gameIn.assassinPick ===
-            gameState.players.find((p) => p.role === 'merlin')?.name
+            gameState.players.find((p) => p.role === 'merlin')?.uid
         ) {
             return gameRef.update({
                 phase: 'end',

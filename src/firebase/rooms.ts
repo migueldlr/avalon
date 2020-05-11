@@ -35,7 +35,6 @@ export const dbJoinRoom = async (
 ): Promise<RoomResponse> => {
     const uid = auth.currentUser?.uid;
     const roomRef = db.ref(`rooms/${roomId}/players/${uid}`);
-    console.log(`rooms/${roomId}/players/${uid}`);
     try {
         const roomSnap: Array<{ name: string }> | null = (
             await db.ref(`rooms/${roomId}`).once('value')
