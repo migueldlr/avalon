@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Text, Button } from 'theme-ui';
 import { connect } from 'react-redux';
 
 import { AppState } from '../store/index';
-import { GameStateType } from '../types';
+import { GameStateType, PlayerType } from '../types';
 
 import { db, auth } from '../firebase/index';
 import { listify } from '../utils';
@@ -25,6 +25,32 @@ const VoteQuest = (props: VoteQuestProps) => {
 
     const [voted, setVoted] = useState<boolean>(false);
     const [vote, setVote] = useState<boolean | null>(null);
+    const [waitFor, setWaitFor] = useState<string[]>([]);
+    useEffect(() => {
+        db.ref(`gameIn/${gameId}/questVote`).on('value', (snap) => {
+            const snapVal: Record<string, boolean> = snap.val();
+
+            const voted = Object.keys(snapVal ?? {});
+
+            const waitForUids = gameState.proposed[gameState.currentQuest][
+                gameState.currentTeamVote
+            ].filter((p) => !voted.includes(p));
+
+            const waitForPlayers = waitForUids
+                .map((u) => gameState.players.find((p) => p.uid === u))
+                .filter((p) => p != null) as PlayerType[];
+
+            const waitFor = waitForPlayers.map((p) => p.name);
+
+            setWaitFor(waitFor);
+        });
+    }, [
+        gameId,
+        gameState.currentQuest,
+        gameState.currentTeamVote,
+        gameState.players,
+        gameState.proposed,
+    ]);
 
     const dbSetVote = (v: boolean) => {
         db.ref(`gameIn/${gameId}/questVote/${uid}`)
@@ -40,6 +66,18 @@ const VoteQuest = (props: VoteQuestProps) => {
         setVoted(true);
         dbSetVote(v);
     };
+
+    const WaitFor = (
+        <>
+            {waitFor.length > 0 && (
+                <Text variant="disclaimer">
+                    Waiting on {listify(waitFor)}
+                    ...
+                </Text>
+            )}
+        </>
+    );
+
     if (
         gameState.proposed[gameState.currentQuest][
             gameState.currentTeamVote
@@ -70,10 +108,16 @@ const VoteQuest = (props: VoteQuestProps) => {
                         Failure...
                     </Button>
                 </Box>
+                {WaitFor}
             </>
         );
     }
-    return <>{listify(questers)} are on the quest...</>;
+    return (
+        <>
+            <Text>{listify(questers)} are on the quest...</Text>
+            {WaitFor}
+        </>
+    );
 };
 
 export default connect((state: AppState) => ({
