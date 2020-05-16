@@ -47,7 +47,12 @@ const AssignRole = (props: AssignRoleProps) => {
     const thisPlayer = gameState.players.find((p) => p.uid === uid);
 
     const baddies = gameState.players
-        .filter((p) => isBad(p.role) && p.uid !== thisPlayer?.uid)
+        .filter(
+            (p) =>
+                isBad(p.role) &&
+                p.role !== 'oberon' &&
+                p.uid !== thisPlayer?.uid,
+        )
         .map((p) => p.name);
     const merlinBaddies = gameState.players
         .filter((p) => isBadForMerlin(p.role) && p.uid !== thisPlayer?.uid)
