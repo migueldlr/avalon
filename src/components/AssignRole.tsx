@@ -27,13 +27,26 @@ const AssignRole = (props: AssignRoleProps) => {
     const { gameState, gameId } = props;
     const [canClick, setCanClick] = useState(false);
     const [first] = useState(Math.random() < 0.5 ? 0 : 1);
+    const [waitFor, setWaitFor] = useState<string[]>([]);
+    const [ready, setLocalReady] = useState(false);
 
     const uid = auth.currentUser?.uid;
     useEffect(() => {
         setTimeout(() => {
             setCanClick(true);
         }, 2000);
-    }, []);
+        db.ref(`gameIn/${gameId}/ready`).on('value', (snap) => {
+            const snapVal: Record<string, boolean> = snap.val();
+
+            const voted = Object.keys(snapVal ?? {});
+
+            const waitForNames = gameState.players
+                .filter((p) => !voted.includes(p.uid))
+                .map((p) => p.name);
+
+            setWaitFor(waitForNames);
+        });
+    }, [gameId, gameState.players]);
 
     const setReady = async () => {
         await db.ref(`gameIn/${gameId}/ready/${uid}`).set(true);
@@ -42,6 +55,7 @@ const AssignRole = (props: AssignRoleProps) => {
     const handleClick = () => {
         setReady();
         setCanClick(false);
+        setLocalReady(true);
     };
 
     const thisPlayer = gameState.players.find((p) => p.uid === uid);
@@ -60,6 +74,17 @@ const AssignRole = (props: AssignRoleProps) => {
     const merlinMorgana = gameState.players
         .filter((p) => p.role === 'morgana' || p.role === 'merlin')
         .map((p) => p.name);
+
+    const WaitFor = (
+        <>
+            {waitFor.length > 0 && (
+                <Text variant="disclaimer">
+                    Waiting on {listify(waitFor)}
+                    ...
+                </Text>
+            )}
+        </>
+    );
 
     return (
         <Box>
@@ -103,14 +128,15 @@ const AssignRole = (props: AssignRoleProps) => {
                         )}
                 </>
             )}
-            {canClick && (
+            {(canClick || ready) && (
                 <Button
-                    disabled={!canClick}
-                    variant={!canClick ? 'disabled' : 'primary'}
+                    disabled={ready}
+                    variant={ready ? 'disabled' : 'primary'}
                     onClick={handleClick}>
                     Ready!
                 </Button>
             )}
+            {(canClick || ready) && WaitFor}
         </Box>
     );
 };

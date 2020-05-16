@@ -50,7 +50,10 @@ const HowTo = (props: Props & RouteComponentProps) => {
                         the game
                     </li>
                     <li>Morgana - appears to Percival as Merlin</li>
-                    <li>Oberon - not revealed to other evil players</li>
+                    <li>
+                        Oberon - not revealed to other evil players and vice
+                        versa
+                    </li>
                     <li>Mordred - not revealed to Merlin</li>
                 </ul>
                 Players that are agents of 💀 evil but do not have a role are
