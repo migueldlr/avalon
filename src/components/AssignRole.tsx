@@ -66,11 +66,14 @@ const AssignRole = (props: AssignRoleProps) => {
 
                     {
                         // need to check the length in case the only other baddy is oberon
-                        isBad(thisPlayer.role) && baddies.length > 0 && (
-                            <Text>
-                                The other minions of Mordred: {listify(baddies)}
-                            </Text>
-                        )
+                        isBad(thisPlayer.role) &&
+                            thisPlayer.role !== 'oberon' &&
+                            baddies.length > 0 && (
+                                <Text>
+                                    The other minions of Mordred:{' '}
+                                    {listify(baddies)}
+                                </Text>
+                            )
                     }
                     {thisPlayer.role === 'merlin' && (
                         <Text>
