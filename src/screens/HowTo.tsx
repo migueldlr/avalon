@@ -36,8 +36,18 @@ const HowTo = (props: Props & RouteComponentProps) => {
             <Text sx={{ mt: 3 }}>
                 The 🏰 good roles are:
                 <ul style={{ margin: '1em 0' }}>
-                    <li>Merlin - knows which players are evil</li>
-                    <li>Percival - knows the identity of Merlin</li>
+                    <li>
+                        Merlin - knows which players are evil, but can be
+                        assassinated
+                    </li>
+                    <li>
+                        Percival - knows the identity of Merlin and Morgana, but
+                        not which is which
+                    </li>
+                    <li>
+                        Tristan and Iseult - know each other, but can be
+                        assassinated as a pair
+                    </li>
                 </ul>
                 Players that are defenders of 🏰 good but do not have a role are
                 the knights of Arthur.
@@ -46,8 +56,8 @@ const HowTo = (props: Props & RouteComponentProps) => {
                 The 💀 evil roles are:
                 <ul style={{ margin: '1em 0' }}>
                     <li>
-                        Assassin - attempts to assassinate Merlin at the end of
-                        the game
+                        Assassin - attempts to assassinate Merlin (or Tristan
+                        and Iseult) at the end of the game
                     </li>
                     <li>Morgana - appears to Percival as Merlin</li>
                     <li>
@@ -90,6 +100,12 @@ const HowTo = (props: Props & RouteComponentProps) => {
                 Assassin guesses correctly, Merlin is assassinated and 💀 evil
                 wins. If the Assassin guesses incorrectly, Merlin is unharmed
                 and 🏰 good wins.
+            </Text>
+            <Text sx={{ mt: 3 }}>
+                If playing with Tristan and Iseult, the Assassin can also
+                assassinate them together as a pair. If the Assassin guesses
+                correctly, the lovers die and 💀 evil wins. If the Assassin
+                guesses incorrectly, love prevails and 🏰 good wins.
             </Text>
 
             <Heading variant="sub2">Variants</Heading>
