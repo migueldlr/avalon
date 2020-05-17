@@ -154,8 +154,22 @@ export const updateGame = (
         });
     } else if (gameState.phase === 'assassin' && gameIn.assassinPick) {
         if (
-            gameIn.assassinPick ===
-            gameState.players.find((p) => p.role === 'merlin')?.uid
+            gameIn.assassinPick.length === 1 &&
+            gameIn.assassinPick[0] ===
+                gameState.players.find((p) => p.role === 'merlin')?.uid
+        ) {
+            return gameRef.update({
+                phase: 'end',
+                assassinPick: gameIn.assassinPick,
+                finalResult: 'bad',
+            });
+        }
+        const lovers = gameState.players.filter(
+            (p) => p.role === 'tristan' || p.role === 'iseult',
+        );
+        if (
+            gameIn.assassinPick.length === 2 &&
+            lovers.every((p) => gameIn.assassinPick.includes(p.uid))
         ) {
             return gameRef.update({
                 phase: 'end',

@@ -3,7 +3,7 @@ import { Checkbox, Text, Button, Label, Box } from 'theme-ui';
 import { connect } from 'react-redux';
 
 import { AppState } from '../store/index';
-import { GameStateType, Role } from '../types';
+import { GameStateType } from '../types';
 
 import { db } from '../firebase/index';
 import { getThisPlayer } from '../utils';

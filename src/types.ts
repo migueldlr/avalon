@@ -6,7 +6,9 @@ export type Role =
     | 'morgana'
     | 'percival'
     | 'oberon'
-    | 'mordred';
+    | 'mordred'
+    | 'tristan'
+    | 'iseult';
 
 export interface PlayerType {
     uid: string;

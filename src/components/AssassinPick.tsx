@@ -6,7 +6,7 @@ import { AppState } from '../store/index';
 import { GameStateType, Role } from '../types';
 
 import { db } from '../firebase/index';
-import { getThisPlayer } from '../utils';
+import { getThisPlayer, getPlayerName } from '../utils';
 
 interface AssassinPickProps {
     gameState: GameStateType;
@@ -19,7 +19,7 @@ const isBad = (role: Role) => {
 
 const AssassinPick = (props: AssassinPickProps) => {
     const { gameState, gameId } = props;
-    const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null); // uid
+    const [selected, setSelected] = useState<string[]>([]); // uid
     const thisPlayer = getThisPlayer(gameState);
 
     const goodies = gameState.players.filter(
@@ -30,40 +30,66 @@ const AssassinPick = (props: AssassinPickProps) => {
         e: React.MouseEvent<HTMLInputElement, MouseEvent>,
     ) => {
         const target = e.target as HTMLInputElement;
-        setSelectedPlayer(target.checked ? target.name : null);
+        let newSelected = [...selected];
+        if (target.checked) {
+            newSelected.push(target.name);
+        } else {
+            newSelected = newSelected.filter((x) => x !== target.name);
+        }
+        setSelected(newSelected);
     };
 
     const submitAssassin = () => {
         db.ref(`gameIn/${gameId}/assassinPick`)
-            .set(selectedPlayer)
+            .set(selected)
             .catch((err) => {
                 // eslint-disable-next-line no-console
                 console.log(err);
             });
     };
 
+    const hasLovers = gameState.players.some((p) => p.role === 'tristan');
+
     return (
         <>
             {thisPlayer?.role === 'assassin' && (
                 <>
-                    <Text>Who is Merlin?</Text>
+                    <Text>Who do you assassinate?</Text>
                     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                         {goodies.map((p) => (
                             <Label key={p.name}>
-                                <Checkbox
-                                    name={p.uid}
-                                    onClick={handleSelect}
-                                    onChange={() => {}}
-                                    checked={selectedPlayer === p.uid}
-                                />
+                                <Checkbox name={p.uid} onClick={handleSelect} />
                                 {p.name}
                             </Label>
                         ))}
                     </Box>
+                    {selected.length === 1 && (
+                        <Text>
+                            You believe {getPlayerName(gameState, selected[0])}{' '}
+                            to be Merlin
+                        </Text>
+                    )}
+                    {selected.length === 2 && hasLovers && (
+                        <Text>
+                            You believe {getPlayerName(gameState, selected[0])}{' '}
+                            and {getPlayerName(gameState, selected[1])} to be
+                            Tristan and Iseult
+                        </Text>
+                    )}
                     <Button
-                        disabled={selectedPlayer == null}
+                        disabled={
+                            !(
+                                selected.length === 1 ||
+                                (selected.length === 2 && hasLovers)
+                            )
+                        }
                         variant={
-                            selectedPlayer == null ? 'disabled' : 'primary'
+                            !(
+                                selected.length === 1 ||
+                                (selected.length === 2 && hasLovers)
+                            )
+                                ? 'disabled'
+                                : 'primary'
                         }
                         onClick={submitAssassin}>
                         Assassinate!
@@ -71,7 +97,7 @@ const AssassinPick = (props: AssassinPickProps) => {
                 </>
             )}
             {thisPlayer?.role !== 'assassin' && (
-                <Text>The assassin is deciding...</Text>
+                <Text>The assassin is about to strike...</Text>
             )}
         </>
     );

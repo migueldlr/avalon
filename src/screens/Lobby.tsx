@@ -29,10 +29,12 @@ const Lobby = (props: LobbyProps) => {
     const [oberon, setOberon] = useState<boolean>(false);
     const [mordred, setMordred] = useState<boolean>(false);
     const [lady, setLady] = useState<boolean>(false);
+    const [lovers, setLovers] = useState<boolean>(false);
     const [userList, setUserList] = useState<Array<string>>([]);
     const [warningMessage, setWarningMessage] = useState('');
     useEffect(() => {
         const numPlayers = userList.length;
+        const good = Number(percival) + Number(lovers) * 2;
         const evil = Number(morgana) + Number(mordred) + Number(oberon);
         if (numPlayers < 5) {
             setWarningMessage('Need at least five players to start the game');
@@ -46,6 +48,11 @@ const Lobby = (props: LobbyProps) => {
         }
         if ((numPlayers < 7 && evil > 1) || (numPlayers < 10 && evil > 2)) {
             setWarningMessage('Too many evil roles');
+            setCanStart(false);
+            return;
+        }
+        if (numPlayers < 6 && good > 1) {
+            setWarningMessage('Too many good roles');
             setCanStart(false);
             return;
         }
@@ -63,7 +70,7 @@ const Lobby = (props: LobbyProps) => {
         }
         setWarningMessage('');
         setCanStart(true);
-    }, [percival, morgana, oberon, mordred, lady, userList.length]);
+    }, [percival, morgana, oberon, mordred, lady, lovers, userList.length]);
 
     useEffect(() => {
         if (roomId == null) return;
@@ -109,6 +116,7 @@ const Lobby = (props: LobbyProps) => {
             if (opts.oberon != null) setOberon(opts.oberon);
             if (opts.mordred != null) setMordred(opts.mordred);
             if (opts.lady != null) setLady(opts.lady);
+            if (opts.lovers != null) setLovers(opts.lovers);
         });
     }, [roomId, joinGame]);
     if (roomId == null)
@@ -131,6 +139,7 @@ const Lobby = (props: LobbyProps) => {
     const handleCreateGame = async () => {
         await dbCreateGame(roomId.toLowerCase());
     };
+
     const toggle = (
         e: React.MouseEvent<HTMLInputElement, MouseEvent>,
         opt: string,
@@ -241,6 +250,19 @@ const Lobby = (props: LobbyProps) => {
                             checked={mordred}
                         />
                         Mordred 💀
+                    </Label>
+                    <Label>
+                        <Checkbox
+                            onClick={(e) => {
+                                if (isHost) toggle(e, 'lovers');
+                            }}
+                            onChange={() => {}}
+                            variant={isHost ? undefined : 'checkboxdisabled'}
+                            disabled={isHost ? false : true}
+                            checked={lovers}
+                            mr={3}
+                        />
+                        Tristan + Iseult 🏰
                     </Label>
                     <Label>
                         <Checkbox

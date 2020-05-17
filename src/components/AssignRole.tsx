@@ -21,6 +21,8 @@ const roleText: Record<Role, string> = {
     morgana: 'the sinister Morgana 💀',
     oberon: 'the unknown Oberon 💀',
     mordred: 'the evil ruler Mordred 💀',
+    tristan: 'the lovestruck Tristan 🏰',
+    iseult: 'the lovestruck Iseult 🏰',
 };
 
 const AssignRole = (props: AssignRoleProps) => {
@@ -126,6 +128,26 @@ const AssignRole = (props: AssignRoleProps) => {
                                 {merlinMorgana[0]}
                             </Text>
                         )}
+                    {thisPlayer.role === 'tristan' && (
+                        <Text>
+                            Your undying love reveals Iseult to be:{' '}
+                            {
+                                gameState.players.find(
+                                    (p) => p.role === 'iseult',
+                                )?.name
+                            }
+                        </Text>
+                    )}
+                    {thisPlayer.role === 'iseult' && (
+                        <Text>
+                            Your undying love reveals Tristan to be:{' '}
+                            {
+                                gameState.players.find(
+                                    (p) => p.role === 'tristan',
+                                )?.name
+                            }
+                        </Text>
+                    )}
                 </>
             )}
             {(canClick || ready) && (

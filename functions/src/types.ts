@@ -45,5 +45,5 @@ interface GameInType {
     continue: { [uid: string]: number };
     lady?: string[];
     proposed: string[][][];
-    assassinPick: string;
+    assassinPick: string[];
 }

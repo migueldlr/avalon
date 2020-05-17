@@ -13,6 +13,10 @@ export const getThisPlayer = (gameState: GameStateType) => {
     return gameState.players.find((p) => p.uid === uid);
 };
 
+export const getPlayerName = (gameState: GameStateType, uid: string) => {
+    return gameState.players.find((p) => p.uid === uid)?.name ?? '';
+};
+
 // this is merlin's version so it includes oberon
 export const isBadForMerlin = (role: Role) => {
     return (
@@ -43,4 +47,6 @@ export const roleDisplay: Record<Role, string> = {
     percival: 'Percival',
     oberon: 'Oberon',
     mordred: 'Mordred',
+    tristan: 'Tristan',
+    iseult: 'Iseult',
 };

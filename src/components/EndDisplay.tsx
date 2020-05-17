@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import { AppState } from '../store/index';
 import { GameStateType } from '../types';
+import { listify } from '../utils';
 
 interface EndDisplayProps {
     gameState: GameStateType;
@@ -16,11 +17,13 @@ const EndDisplay = (props: EndDisplayProps) => {
             {gameState.assassinPick && (
                 <Text>
                     The assassin killed{' '}
-                    {
-                        gameState.players.find(
-                            (p) => p.uid === gameState.assassinPick,
-                        )?.name
-                    }
+                    {listify(
+                        gameState.players
+                            .filter((p) =>
+                                gameState.assassinPick.includes(p.uid),
+                            )
+                            .map((p) => p.name),
+                    )}
                 </Text>
             )}
             {gameState.finalResult === 'bad' ? (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Checkbox, Text, Button, Label, Box } from 'theme-ui';
+import { Text, Button } from 'theme-ui';
 import { connect } from 'react-redux';
 
 import { AppState } from '../store/index';

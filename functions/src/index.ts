@@ -12,6 +12,7 @@ const getRoles = (
     morgana: boolean,
     oberon: boolean,
     mordred: boolean,
+    lovers: boolean,
 ): string[] => {
     const goodBadMap: Record<number, number[]> = {
         5: [3, 2],
@@ -45,6 +46,13 @@ const getRoles = (
     if (mordred) {
         const mordredIdx = bad.findIndex((str) => str === 'bad');
         if (mordredIdx !== -1) bad[mordredIdx] = 'mordred';
+    }
+    if (lovers) {
+        const loversIdx = good.findIndex((str) => str === 'good');
+        if (loversIdx !== -1) {
+            good[loversIdx] = 'tristan';
+            good[loversIdx + 1] = 'iseult';
+        }
     }
     const roles = shuffle(good.concat(bad));
     return roles;
@@ -93,6 +101,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
         roomData.opts?.morgana ?? false,
         roomData.opts?.oberon ?? false,
         roomData.opts?.mordred ?? false,
+        roomData.opts?.lovers ?? false,
     );
     const players = Object.entries(roomData.players).map(([uid, name], i) => ({
         uid,
