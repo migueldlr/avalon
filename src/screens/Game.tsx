@@ -14,6 +14,8 @@ import AssassinPick from '../components/AssassinPick';
 import GameStateDisplay from '../components/GameStateDisplay';
 import EndDisplay from '../components/EndDisplay';
 import { updateGame } from '../store/game/actions';
+import LadyPick from '../components/LadyPick';
+import LadyReveal from '../components/LadyReveal';
 
 interface GameProps {
     gameId: string;
@@ -42,6 +44,8 @@ const Game = (props: GameProps) => {
         voteQuest: <VoteQuest />,
         decision: <DecisionDisplay />,
         assassin: <AssassinPick />,
+        ladyPick: <LadyPick />,
+        ladyReveal: <LadyReveal />,
         end: <EndDisplay />,
     };
     return (

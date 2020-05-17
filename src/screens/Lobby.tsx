@@ -28,6 +28,7 @@ const Lobby = (props: LobbyProps) => {
     const [morgana, setMorgana] = useState<boolean>(false);
     const [oberon, setOberon] = useState<boolean>(false);
     const [mordred, setMordred] = useState<boolean>(false);
+    const [lady, setLady] = useState<boolean>(false);
     const [userList, setUserList] = useState<Array<string>>([]);
     const [warningMessage, setWarningMessage] = useState('');
     useEffect(() => {
@@ -54,9 +55,15 @@ const Lobby = (props: LobbyProps) => {
             );
             return;
         }
+        if (lady && numPlayers < 7) {
+            setWarningMessage(
+                'Lady of the Lake is recommended for games with 7 or more players',
+            );
+            return;
+        }
         setWarningMessage('');
         setCanStart(true);
-    }, [percival, morgana, oberon, mordred, userList.length]);
+    }, [percival, morgana, oberon, mordred, lady, userList.length]);
 
     useEffect(() => {
         if (roomId == null) return;
@@ -101,6 +108,7 @@ const Lobby = (props: LobbyProps) => {
             if (opts.morgana != null) setMorgana(opts.morgana);
             if (opts.oberon != null) setOberon(opts.oberon);
             if (opts.mordred != null) setMordred(opts.mordred);
+            if (opts.lady != null) setLady(opts.lady);
         });
     }, [roomId, joinGame]);
     if (roomId == null)
@@ -140,7 +148,7 @@ const Lobby = (props: LobbyProps) => {
     const isHost = host.uid === uid;
     return (
         <Box>
-            <Grid sx={{ gridTemplateColumns: '150px 150px' }}>
+            <Grid sx={{ gridTemplateColumns: ['200px', '150px 200px'] }}>
                 <Box sx={{ pr: 2 }}>
                     <Button
                         onClick={() => {
@@ -233,6 +241,19 @@ const Lobby = (props: LobbyProps) => {
                             checked={mordred}
                         />
                         Mordred 💀
+                    </Label>
+                    <Label>
+                        <Checkbox
+                            onClick={(e) => {
+                                if (isHost) toggle(e, 'lady');
+                            }}
+                            onChange={() => {}}
+                            variant={isHost ? undefined : 'checkboxdisabled'}
+                            disabled={isHost ? false : true}
+                            checked={lady}
+                            mr={3}
+                        />
+                        Lady of the Lake 🧝‍♀️
                     </Label>
                     <Text variant="disclaimer" sx={{ fontSize: '14px', mt: 2 }}>
                         {warningMessage}

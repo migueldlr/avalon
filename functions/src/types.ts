@@ -1,38 +1,27 @@
-export type Role =
-    | 'bad'
-    | 'good'
-    | 'merlin'
-    | 'assassin'
-    | 'morgana'
-    | 'percival'
-    | 'oberon'
-    | 'mordred';
-
-export interface PlayerType {
-    uid: string;
-    name: string;
-    role: Role;
-}
-
-export interface RoomState {
+interface RoomState {
     opts: { [opt: string]: boolean };
     players: RoomPlayer;
 }
 
-export interface RoomPlayer {
+interface RoomPlayer {
     [uid: string]: string;
 }
 
-export interface GameStateType {
+interface PlayerType {
+    uid: string;
+    name: string;
+    role: string;
+}
+
+interface GameStateType {
     phase:
         | 'assign'
         | 'turn'
         | 'voteTeam'
         | 'voteQuest'
-        | 'start'
         | 'decision'
-        | 'assassin'
         | 'end'
+        | 'assassin'
         | 'ladyPick'
         | 'ladyReveal';
     numPlayers: number;
@@ -41,14 +30,11 @@ export interface GameStateType {
     currentQuest: number;
     currentTeamVote: number;
     questResults: boolean[];
-    questVote: boolean[] | string;
+    questVote: boolean[];
     quests: number[];
     players: Array<PlayerType>;
-    proposed: string[][][];
-    teamVote: { [uid: string]: boolean }[][];
     finalResult: 'good' | 'bad';
     rejects: number;
-    assassinPick: string;
     lady?: string[];
 }
 

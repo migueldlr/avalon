@@ -32,7 +32,7 @@ const VoteTeam = (props: VoteTeamProps) => {
         ).on('value', (snap) => {
             const snapVal: Record<string, boolean> = snap.val();
 
-            const voted = Object.keys(snapVal);
+            const voted = Object.keys(snapVal ?? {});
 
             const waitFor = gameState.players
                 .filter((p) => !voted.includes(p.uid))

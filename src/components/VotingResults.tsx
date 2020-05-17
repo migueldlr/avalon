@@ -75,6 +75,15 @@ const MissionLegend = () => {
     );
 };
 
+const LadyDisplay = ({ lady }: { lady: string[] }) => {
+    return (
+        <Flex mt={2} sx={{ flexDirection: 'column', alignItems: 'center' }}>
+            <Text variant="legend">The Lady of the Lake 🧝‍♀️</Text>
+            <Text variant="legend">{lady.join('→')}</Text>
+        </Flex>
+    );
+};
+
 const MissionVote = (props: {
     votes: { [uid: string]: boolean }[];
     questers: string[][];
@@ -194,6 +203,15 @@ const VotingResults = (props: VotingResultsProps) => {
             <Box>
                 <MissionLegend />
                 <PlayersDisplay gameState={gameState} />
+                {gameState.lady && (
+                    <LadyDisplay
+                        lady={gameState.lady.map(
+                            (u) =>
+                                gameState.players.find((p) => p.uid === u)
+                                    ?.name ?? '',
+                        )}
+                    />
+                )}
             </Box>
         </Flex>
     );

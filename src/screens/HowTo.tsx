@@ -91,6 +91,23 @@ const HowTo = (props: Props & RouteComponentProps) => {
                 wins. If the Assassin guesses incorrectly, Merlin is unharmed
                 and 🏰 good wins.
             </Text>
+
+            <Heading variant="sub2">Variants</Heading>
+            <Heading variant="sub3">Lady of the Lake 🧝‍♀️</Heading>
+            <Text>
+                This a variant that is recommended for games with seven or more
+                players. It increases the available information in the game.
+                After the 2nd, 3rd, and 4th quests, The Lady of the Lake 🧝‍♀️
+                bestows her powers on a single player, allowing them to see the
+                allegiance of any other player. The next round, the power of the
+                Lady of the Lake 🧝‍♀️ transfers to the player who was examined.
+            </Text>
+            <Text sx={{ mt: 3 }}>
+                The Lady of the Lake 🧝‍♀️ will only be used three times in a game.
+                A player that used the Lady of the Lake 🧝‍♀️ cannot have the Lady
+                used against them.
+            </Text>
+
             <Heading variant="sub2">Notes</Heading>
             <Text>
                 <Text variant="fancy">Avalon</Text> is a social deduction game.

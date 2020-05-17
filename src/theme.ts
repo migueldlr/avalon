@@ -103,6 +103,11 @@ export default {
             pt: 3,
             // color: 'heading',
         },
+        sub3: {
+            fontSize: [2, 3, 4],
+            pt: 2,
+            // color: 'heading',
+        },
     },
     styles: {
         root: {
