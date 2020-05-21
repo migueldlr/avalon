@@ -78,7 +78,10 @@ export const updateGameListener = functions.database
         const gameRef = db.ref(`games/${gameId}`);
         return gameRef.once('value', (gameSnap) => {
             const gameState = gameSnap.val();
-            return updateGame(gameState, gameIn, db.ref(), gameId);
+            return Promise.all([
+                updateGame(gameState, gameIn, db.ref(), gameId),
+                gameRef.child('lastupdated').set(context.timestamp),
+            ]);
         });
     });
 
@@ -131,3 +134,33 @@ export const createGame = functions.https.onCall(async (data, context) => {
             throw new functions.https.HttpsError('internal', err);
         });
 });
+
+export const clearStale = functions.pubsub
+    .schedule('every 12 hours')
+    .onRun((context) => {
+        db.ref('/games')
+            .once('value')
+            .then((snap) => {
+                const games: { [gid: string]: GameStateType } = snap.val();
+                const out: Promise<any>[] = [];
+                Object.entries(games).forEach(([gid, game]) => {
+                    // delete any game that hasn't been updated in 12 hours
+                    if (
+                        Date.parse(game.lastupdated) <
+                            Date.now() - 12 * 60 * 60 * 1000 ||
+                        game.lastupdated == null
+                    ) {
+                        console.log(gid);
+                        out.push(db.ref(`/games/${gid}`).remove());
+                        out.push(db.ref(`/gameIn/${gid}`).remove());
+                        out.push(db.ref(`/rooms/${gid}`).remove());
+                        // TODO: add info to aggregate stats
+                    }
+                });
+                return Promise.all(out);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+        return null;
+    });

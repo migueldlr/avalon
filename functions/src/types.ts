@@ -36,6 +36,7 @@ interface GameStateType {
     finalResult: 'good' | 'bad';
     rejects: number;
     lady?: string[];
+    lastupdated: string;
 }
 
 interface GameInType {
