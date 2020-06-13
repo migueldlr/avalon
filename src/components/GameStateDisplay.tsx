@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { AppState } from '../store/index';
 import { GameStateType } from '../types';
 import VotingResults from './VotingResults';
+import RoleViewer from './RoleViewer';
 
 interface GameStateDisplayProps {
     gameState: GameStateType;
@@ -67,6 +68,7 @@ const GameStateDisplay = (props: GameStateDisplayProps) => {
             id="GameStateDisplay"
             sx={{ flexDirection: 'column', alignItems: 'center' }}>
             <VotingResults gameState={gameState} />
+            <RoleViewer />
             <QuestResults gameState={gameState} />
         </Flex>
     );

@@ -50,3 +50,16 @@ export const roleDisplay: Record<Role, string> = {
     tristan: 'Tristan',
     iseult: 'Iseult',
 };
+
+export const roleText: Record<Role, string> = {
+    good: 'a knight of Arthur 🏰',
+    merlin: 'the wise wizard Merlin 🏰',
+    percival: 'the brave Percival 🏰',
+    bad: 'an evil minion of Mordred 💀',
+    assassin: 'the vicious Assassin 💀',
+    morgana: 'the sinister Morgana 💀',
+    oberon: 'the unknown Oberon 💀',
+    mordred: 'the evil ruler Mordred 💀',
+    tristan: 'the lovestruck Tristan 🏰',
+    iseult: 'the lovestruck Iseult 🏰',
+};

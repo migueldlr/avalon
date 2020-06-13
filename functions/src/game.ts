@@ -145,13 +145,19 @@ export const updateGame = (
         gameState.phase === 'ladyReveal' &&
         gameIn.ready[(gameState.lady ?? [])[gameState.currentQuest - 1]]
     ) {
-        return gameRef.update({
-            phase: 'turn',
-            currentTurn: (gameState.currentTurn + 1) % gameState.numPlayers,
-            currentQuest: gameState.currentQuest + 1,
-            currentTeamVote: 0,
-            rejects: 0,
-        });
+        return Promise.all([
+            gameRef.update({
+                phase: 'turn',
+                currentTurn: (gameState.currentTurn + 1) % gameState.numPlayers,
+                currentQuest: gameState.currentQuest + 1,
+                currentTeamVote: 0,
+                rejects: 0,
+            }),
+            gameInRef.update({
+                questVote: [],
+                teamVote: [],
+            }),
+        ]);
     } else if (gameState.phase === 'assassin' && gameIn.assassinPick) {
         if (
             gameIn.assassinPick.length === 1 &&
