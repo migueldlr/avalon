@@ -58,26 +58,20 @@ const Home = (props: HomeProps) => {
             <Heading sx={{ textAlign: 'center' }}>
                 {egg ? 'Hey Tribe, Miguel Here' : 'The Resistance: Avalon'}
             </Heading>
-            <Box sx={{ textAlign: 'center' }}>
+            <Flex sx={{ textAlign: 'center', flexDirection: 'column' }}>
                 <Input
                     sx={{
-                        mb: '1em',
+                        mb: '0.5em',
                         borderColor: nameInput !== '' ? '' : 'outlinefocused',
                     }}
                     onChange={(e) => setNameInput(e.target.value)}
                     value={nameInput}
                     placeholder="Your Name"
                 />
-                <Button
-                    onClick={handleCreate}
-                    sx={{ width: '100%', mb: '1em' }}
-                    disabled={nameInput === ''}
-                    variant={nameInput === '' ? 'disabled' : 'primary'}>
-                    Create Room
-                </Button>
                 <Input
                     sx={{
                         borderColor: roomIdInput !== '' ? '' : 'outlinefocused',
+                        mb: '0.5em',
                     }}
                     onChange={(e) =>
                         setRoomIdInput(e.target.value.toUpperCase())
@@ -96,15 +90,22 @@ const Home = (props: HomeProps) => {
                     disabled={roomIdInput === '' || nameInput === ''}>
                     Join Room
                 </Button>
-                <Text sx={{ height: '1em' }}>{message}</Text>
+                <Text sx={{ mb: '0.5em' }}>{message}</Text>
+                <Button
+                    onClick={handleCreate}
+                    sx={{ width: '100%', mb: '0.5em' }}
+                    disabled={nameInput === ''}
+                    variant={nameInput === '' ? 'disabled' : 'primary'}>
+                    Create Room
+                </Button>
                 <Button
                     sx={{ width: '100%' }}
                     variant="alt"
                     onClick={() => navigate('howto')}>
                     How To Play
                 </Button>
-            </Box>
-            <Box sx={{ mt: '45vh', position: 'absolute', textAlign: 'center' }}>
+            </Flex>
+            <Box sx={{ mt: '90vh', position: 'absolute', textAlign: 'center' }}>
                 <Text variant="disclaimer">
                     Based on Don Eskridge's{' '}
                     <Text sx={{ fontStyle: 'italic', display: 'inline' }}>
