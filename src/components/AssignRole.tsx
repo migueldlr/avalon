@@ -50,7 +50,7 @@ const AssignRole = (props: AssignRoleProps) => {
     const WaitFor = (
         <>
             {waitFor.length > 0 && (
-                <Text variant="disclaimer">
+                <Text variant="disclaimer" sx={{ mt: 1 }}>
                     Waiting on {listify(waitFor)}
                     ...
                 </Text>
