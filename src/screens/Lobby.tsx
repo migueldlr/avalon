@@ -175,7 +175,7 @@ const Lobby = (props: LobbyProps) => {
                         ))}
                     </Flex>
                     {isHost && (
-                        <Flex sx={{ flexDirection: 'row' }}>
+                        <Flex sx={{ flexDirection: 'row', mb: 1 }}>
                             <Button
                                 onClick={handleCreateGame}
                                 disabled={!canStart}
