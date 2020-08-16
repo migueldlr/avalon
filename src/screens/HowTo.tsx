@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import React from 'react';
-import { Button, Text, Flex, Heading, Divider } from 'theme-ui';
+import { Button, Text, Flex, Heading, Divider, Box } from 'theme-ui';
 import { RouteComponentProps, navigate } from '@reach/router';
+import NumRoles from '../components/NumRoles';
 
 interface Props {}
 
@@ -69,6 +70,13 @@ const HowTo = (props: Props & RouteComponentProps) => {
                 Players that are agents of 💀 evil but do not have a role are
                 the minions of Mordred.
             </Text>
+            <Text sx={{ mt: 3 }}>
+                The number of good and evil players in a game are dependent on
+                the total number of players:
+                <Box sx={{ maxWidth: '15%', mx: 'auto', mt: 3 }}>
+                    <NumRoles />
+                </Box>
+            </Text>
             <Heading variant="sub2">Gameplay</Heading>
             <Text>
                 A single game consists of five sequential quests. Each quest
@@ -77,7 +85,7 @@ const HowTo = (props: Props & RouteComponentProps) => {
                 leader and they nominate the appropriate number of players to go
                 on the current quest. All players then{' '}
                 <Text variant="bold">publicly</Text> vote "yea" or "nay". If a
-                majority (>50%) of players vote "yea", the quest proposal is
+                majority (&gt;50%) of players vote "yea", the quest proposal is
                 accepted and the nominated players go on the quest. If a quest
                 proposal is rejected, it is the next player's turn to be quest
                 leader. If five quest proposals are rejected in a row, 💀 evil
@@ -111,7 +119,7 @@ const HowTo = (props: Props & RouteComponentProps) => {
             <Heading variant="sub2">Variants</Heading>
             <Heading variant="sub3">Lady of the Lake 🧝‍♀️</Heading>
             <Text>
-                This a variant that is recommended for games with seven or more
+                This variant is recommended for games with seven or more
                 players. It increases the available information in the game.
                 After the 2nd, 3rd, and 4th quests, The Lady of the Lake 🧝‍♀️
                 bestows her powers on a single player, allowing them to see the
