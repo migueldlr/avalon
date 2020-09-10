@@ -1,4 +1,5 @@
 import * as firebase from 'firebase/app';
+import 'firebase/analytics';
 import 'firebase/firestore';
 import 'firebase/auth';
 import 'firebase/database';
@@ -14,6 +15,8 @@ firebase.initializeApp({
     appId: '1:665545464872:web:87e637133856d40f5ba91d',
     measurementId: 'G-59CTFLXESZ',
 });
+
+firebase.analytics();
 
 firebase
     .auth()
